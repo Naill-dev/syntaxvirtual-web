@@ -104,8 +104,4 @@ CREATE POLICY "Allow authenticated full access estimator" ON estimator_inquiries
   FOR ALL TO authenticated USING (true);
 ```
 
-## Running Locally
 
-1. `npm install`
-2. `npm run dev`
-3. Access `/dashboard` to manage content.
