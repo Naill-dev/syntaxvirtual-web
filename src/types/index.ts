@@ -31,6 +31,18 @@ export interface PortfolioItem {
   githubUrl?: string;
 }
 
+export interface PortfolioProject {
+  id: string;
+  title: string;
+  description?: string;
+  tech_stack: string[];
+  github_url: string;
+  live_demo_url?: string;
+  image_url?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface ArticleItem {
   id: string; // UUID from Supabase
   title: string;

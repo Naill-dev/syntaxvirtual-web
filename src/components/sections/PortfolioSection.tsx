@@ -1,21 +1,32 @@
-import React, { useState } from 'react';
-import { portfolioData } from '../../data/portfolioData';
-import { PortfolioItem } from '../../types';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../../lib/supabaseClient';
+import { PortfolioProject } from '../../types';
 import { GlowingCard } from '../visual/GlowingCard';
-import { ArrowUpRight, Sparkles, Layers, CheckCircle2, Eye } from 'lucide-react';
+import { ArrowUpRight, Sparkles, Layers, CheckCircle2, Eye, Briefcase } from 'lucide-react';
 
-interface PortfolioSectionProps {
-  onSelectProject: (project: PortfolioItem) => void;
-}
+export const PortfolioSection: React.FC = () => {
+  const [projects, setProjects] = useState<PortfolioProject[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ onSelectProject }) => {
-  const [activeFilter, setActiveFilter] = useState<string>('All');
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('portfolio')
+          .select('*')
+          .order('created_at', { ascending: false });
 
-  const filterTabs = ['All', 'Web Apps', 'UI/UX', 'E-commerce', 'AI / Cloud'];
+        if (error) throw error;
+        setProjects(data || []);
+      } catch (error) {
+        console.error('Error fetching portfolio:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const filteredProjects = activeFilter === 'All'
-    ? portfolioData
-    : portfolioData.filter((p) => p.category === activeFilter);
+    fetchProjects();
+  }, []);
 
   return (
     <section id="portfolio" className="relative py-24 lg:py-32 overflow-hidden border-t border-slate-800/80 bg-[#070A1E]/80">
@@ -39,117 +50,108 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ onSelectProj
               Explore flagship web applications, headless commerce systems, and digital platforms engineered by SyntaxVirtual.
             </p>
           </div>
-
-          {/* Filter Tabs */}
-          <div className="flex flex-wrap items-center gap-2 bg-surface-200/80 p-1.5 rounded-2xl border border-slate-800 backdrop-blur-md self-start md:self-auto">
-            {filterTabs.map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveFilter(tab)}
-                className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${
-                  activeFilter === tab
-                    ? 'bg-accent-purple text-white shadow-glow-sm font-semibold'
-                    : 'text-slate-400 hover:text-white hover:bg-surface-100/60'
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
         </div>
 
-        {/* Project Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProjects.map((project) => (
-            <div
-              key={project.id}
-              onClick={() => onSelectProject(project)}
-              className="group relative rounded-2xl border border-slate-800 bg-surface-300/80 overflow-hidden backdrop-blur-xl hover:border-accent-purple/50 transition-all duration-300 flex flex-col justify-between cursor-pointer hover:shadow-glow-md hover:-translate-y-1.5"
-            >
-              <div>
-                {/* Image Container with Zoom and Overlay */}
-                <div className="relative aspect-[16/10] overflow-hidden bg-slate-900">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out filter brightness-95 group-hover:brightness-105"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0F2C] via-transparent to-transparent opacity-80" />
+        {/* Loading State */}
+        {loading && (
+          <div className="flex justify-center items-center py-20">
+            <svg className="animate-spin h-8 w-8 text-accent-purple" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </div>
+        )}
 
-                  {/* Top Badges */}
-                  <div className="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none">
-                    <span className="px-3 py-1 rounded-full bg-[#0A0F2C]/85 backdrop-blur-md border border-slate-700/60 text-[11px] font-mono text-accent-light font-medium shadow-sm">
-                      {project.category}
-                    </span>
-                    <span className="px-2.5 py-1 rounded-full bg-[#0A0F2C]/85 backdrop-blur-md border border-slate-700/60 text-[11px] font-mono text-slate-300">
-                      {project.year}
-                    </span>
+        {/* Empty State */}
+        {!loading && projects.length === 0 && (
+          <div className="text-center py-20 bg-surface-300/50 border border-slate-800 rounded-2xl backdrop-blur-md">
+            <Briefcase className="w-12 h-12 text-slate-500 mx-auto mb-4 opacity-50" />
+            <h3 className="text-lg font-bold text-white mb-2">No projects yet</h3>
+            <p className="text-slate-400">Check back soon for updates to our portfolio.</p>
+          </div>
+        )}
+
+        {/* Project Grid */}
+        {!loading && projects.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {projects.map((project) => (
+              <div
+                key={project.id}
+                className="group relative rounded-2xl border border-slate-800 bg-surface-300/80 overflow-hidden backdrop-blur-xl hover:border-accent-purple/50 transition-all duration-300 flex flex-col justify-between hover:shadow-glow-md hover:-translate-y-1.5"
+              >
+                <div>
+                  {/* Image Container with Zoom and Overlay */}
+                  <div className="relative aspect-[16/10] overflow-hidden bg-slate-900">
+                    {project.image_url ? (
+                      <img
+                        src={project.image_url}
+                        alt={project.title}
+                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out filter brightness-95 group-hover:brightness-105"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Briefcase className="w-12 h-12 text-slate-700" />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0A0F2C] via-transparent to-transparent opacity-80" />
                   </div>
 
-                  {/* Hover Quick Action */}
-                  <div className="absolute inset-0 bg-accent-purple/20 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <div className="px-4 py-2 rounded-xl bg-[#0A0F2C]/90 border border-accent-purple/50 text-xs font-semibold text-white flex items-center gap-2 shadow-glow-sm transform translate-y-2 group-hover:translate-y-0 transition-transform">
-                      <Eye className="w-4 h-4 text-accent-lavender" />
-                      <span>View Full Case Study</span>
+                  {/* Content */}
+                  <div className="p-6">
+                    <h3 className="text-lg font-bold text-white mb-2 group-hover:text-accent-light transition-colors line-clamp-1">
+                      {project.title}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-4 line-clamp-2">
+                      {project.description || 'No description provided.'}
+                    </p>
+
+                    {/* Tech Tags */}
+                    <div className="flex flex-wrap gap-1.5 mb-6">
+                      {project.tech_stack.slice(0, 4).map((tag, idx) => (
+                        <span
+                          key={idx}
+                          className="px-2 py-0.5 rounded-md bg-surface-100/80 border border-slate-800 text-[10px] font-mono text-slate-300"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                      {project.tech_stack.length > 4 && (
+                        <span className="px-2 py-0.5 rounded-md bg-surface-100/80 border border-slate-800 text-[10px] font-mono text-slate-400">
+                          +{project.tech_stack.length - 4}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
 
-                {/* Content */}
-                <div className="p-6">
-                  <div className="text-xs font-mono text-slate-400 mb-1.5">
-                    {project.client}
-                  </div>
-                  <h3 className="text-lg font-bold text-white mb-2 group-hover:text-accent-light transition-colors line-clamp-1">
-                    {project.title}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-4 line-clamp-2">
-                    {project.summary}
-                  </p>
-
-                  {/* Tech Tags */}
-                  <div className="flex flex-wrap gap-1.5 mb-6">
-                    {project.tags.slice(0, 4).map((tag, idx) => (
-                      <span
-                        key={idx}
-                        className="px-2 py-0.5 rounded-md bg-surface-100/80 border border-slate-800 text-[10px] font-mono text-slate-300"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
+                {/* Card Footer: Links */}
+                <div className="px-6 py-4 border-t border-slate-800/80 bg-surface-200/50 flex flex-wrap items-center gap-3">
+                  {project.live_demo_url && (
+                    <a
+                      href={project.live_demo_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex-1 text-center py-2 px-3 rounded-lg bg-accent-purple/20 border border-accent-purple/50 text-xs font-semibold text-accent-light hover:bg-accent-purple/40 transition-colors"
+                    >
+                      Live Demo
+                    </a>
+                  )}
+                  {project.github_url && (
+                    <a
+                      href={project.github_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex-1 text-center py-2 px-3 rounded-lg bg-surface-100 border border-slate-700 text-xs font-semibold text-slate-300 hover:text-white hover:bg-surface-200 transition-colors"
+                    >
+                      Source Code
+                    </a>
+                  )}
                 </div>
               </div>
-
-              {/* Card Footer: Links */}
-              <div className="px-6 py-4 border-t border-slate-800/80 bg-surface-200/50 flex flex-wrap items-center gap-3">
-                {project.liveUrl && (
-                  <a
-                    href={project.liveUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="flex-1 text-center py-2 px-3 rounded-lg bg-accent-purple/20 border border-accent-purple/50 text-xs font-semibold text-accent-light hover:bg-accent-purple/40 transition-colors"
-                  >
-                    Live Demo
-                  </a>
-                )}
-                {project.githubUrl && (
-                  <a
-                    href={project.githubUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="flex-1 text-center py-2 px-3 rounded-lg bg-surface-100 border border-slate-700 text-xs font-semibold text-slate-300 hover:text-white hover:bg-surface-200 transition-colors"
-                  >
-                    Source Code
-                  </a>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

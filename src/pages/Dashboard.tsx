@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
-import { LogOut, LayoutDashboard, MessageSquare, BookOpen, Inbox, Menu, X } from 'lucide-react';
+import { LogOut, LayoutDashboard, MessageSquare, BookOpen, Inbox, Menu, X, Briefcase } from 'lucide-react';
 
 import { DashboardLogin } from '../components/dashboard/DashboardLogin';
 import { ReviewManager } from '../components/dashboard/ReviewManager';
 import { ArticleManager } from '../components/dashboard/ArticleManager';
 import { ContactManager } from '../components/dashboard/ContactManager';
 import { CommentManager } from '../components/dashboard/CommentManager';
+import { PortfolioManager } from '../components/dashboard/PortfolioManager';
 
 export function Dashboard() {
   const [session, setSession] = useState<any>(null);
@@ -78,6 +79,7 @@ export function Dashboard() {
       badge: pendingComments > 0 ? pendingComments : undefined 
     },
     { name: 'Inquiries', path: '/dashboard/inquiries', icon: <Inbox className="w-4 h-4" /> },
+    { name: 'Portfolio', path: '/dashboard/portfolio', icon: <Briefcase className="w-4 h-4" /> },
   ];
 
   return (
@@ -169,6 +171,7 @@ export function Dashboard() {
             <Route path="/articles" element={<ArticleManager />} />
             <Route path="/comments" element={<CommentManager />} />
             <Route path="/inquiries" element={<ContactManager />} />
+            <Route path="/portfolio" element={<PortfolioManager />} />
           </Routes>
         </div>
       </main>

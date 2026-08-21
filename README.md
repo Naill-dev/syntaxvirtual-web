@@ -78,6 +78,19 @@ CREATE TABLE article_comments (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- 6. Portfolio Table
+CREATE TABLE portfolio (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT,
+  tech_stack TEXT[] NOT NULL,
+  github_url TEXT NOT NULL,
+  live_demo_url TEXT,
+  image_url TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Row Level Security (RLS) Policies
 ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
 ALTER TABLE articles ENABLE ROW LEVEL SECURITY;
@@ -119,6 +132,11 @@ ALTER TABLE article_comments ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public insert article comments" ON article_comments FOR INSERT TO public WITH CHECK (true);
 CREATE POLICY "Allow public read approved article comments" ON article_comments FOR SELECT TO public USING (is_approved = true);
 CREATE POLICY "Allow authenticated full access article comments" ON article_comments FOR ALL TO authenticated USING (true);
+
+-- Portfolio Policies
+ALTER TABLE portfolio ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read portfolio" ON portfolio FOR SELECT TO public USING (true);
+CREATE POLICY "Allow authenticated full access portfolio" ON portfolio FOR ALL TO authenticated USING (true);
 ```
 
 

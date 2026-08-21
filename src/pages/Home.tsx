@@ -13,15 +13,12 @@ import { BlogSection } from '../components/sections/BlogSection';
 import { TestimonialsSection } from '../components/sections/TestimonialsSection';
 import { FaqSection } from '../components/sections/FaqSection';
 import { ContactSection } from '../components/sections/ContactSection';
-
-import { ProjectModal } from '../components/modals/ProjectModal';
 import { ArticleModal } from '../components/modals/ArticleModal';
 import { BookingModal } from '../components/modals/BookingModal';
 
 import { PortfolioItem, ArticleItem } from '../types';
 
 export function Home() {
-  const [selectedProject, setSelectedProject] = useState<PortfolioItem | null>(null);
   const [selectedArticle, setSelectedArticle] = useState<ArticleItem | null>(null);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
 
@@ -42,7 +39,7 @@ export function Home() {
           onSelectService={() => setIsBookingOpen(true)}
           onOpenBooking={() => setIsBookingOpen(true)}
         />
-        <PortfolioSection onSelectProject={setSelectedProject} />
+        <PortfolioSection />
         <ProjectEstimator onApplyEstimate={handleApplyEstimate} />
         <AboutSection />
         <ProcessSection />
@@ -53,11 +50,6 @@ export function Home() {
       </main>
 
       <Footer />
-
-      <ProjectModal 
-        project={selectedProject} 
-        onClose={() => setSelectedProject(null)} 
-      />
       
       <ArticleModal 
         article={selectedArticle} 
