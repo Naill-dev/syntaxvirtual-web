@@ -122,7 +122,7 @@ export function ArticleManager() {
         </button>
       </div>
       
-      <div className="bg-surface-300 border border-slate-800 rounded-2xl overflow-hidden">
+      <div className="bg-surface-300 border border-slate-800 rounded-2xl overflow-x-auto">
         <table className="w-full text-left text-sm text-slate-300">
           <thead className="bg-surface-200 text-xs uppercase font-mono text-slate-400 border-b border-slate-800">
             <tr>

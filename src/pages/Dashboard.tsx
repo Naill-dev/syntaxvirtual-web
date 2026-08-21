@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
-import { LogOut, LayoutDashboard, MessageSquare, BookOpen, Inbox } from 'lucide-react';
+import { LogOut, LayoutDashboard, MessageSquare, BookOpen, Inbox, Menu, X } from 'lucide-react';
 
 import { DashboardLogin } from '../components/dashboard/DashboardLogin';
 import { ReviewManager } from '../components/dashboard/ReviewManager';
@@ -11,6 +11,7 @@ import { ContactManager } from '../components/dashboard/ContactManager';
 export function Dashboard() {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -28,6 +29,11 @@ export function Dashboard() {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Close sidebar on mobile when navigating
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [location.pathname]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -57,17 +63,32 @@ export function Dashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#060919] text-slate-300 font-sans flex">
+    <div className="min-h-screen bg-[#060919] text-slate-300 font-sans flex flex-col md:flex-row relative">
+      
+      {/* Mobile Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 bg-surface-300 border-r border-slate-800 flex flex-col shrink-0">
-        <div className="h-16 flex items-center px-6 border-b border-slate-800">
+      <aside className={`fixed md:static inset-y-0 left-0 z-50 w-64 bg-surface-300 border-r border-slate-800 flex flex-col shrink-0 transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+        <div className="h-16 flex items-center justify-between px-6 border-b border-slate-800">
           <Link to="/" className="text-white font-bold text-lg flex items-center gap-2 hover:text-accent-light transition-colors">
             <span className="w-2 h-2 rounded-full bg-accent-purple" />
             Syntax Admin
           </Link>
+          <button 
+            className="md:hidden text-slate-400 hover:text-white" 
+            onClick={() => setIsSidebarOpen(false)}
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
         
-        <div className="flex-1 py-6 px-4 space-y-1">
+        <div className="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
           {navItems.map((item) => (
             <Link
               key={item.name}
@@ -96,13 +117,25 @@ export function Dashboard() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto bg-[#0A0F2C]">
-        <div className="p-8 max-w-6xl mx-auto">
+      <main className="flex-1 h-screen overflow-y-auto bg-[#0A0F2C] min-w-0">
+        
+        {/* Mobile Header */}
+        <div className="md:hidden h-16 flex items-center px-4 border-b border-slate-800 bg-surface-300 sticky top-0 z-30">
+          <button 
+            onClick={() => setIsSidebarOpen(true)}
+            className="p-2 -ml-2 rounded-lg text-slate-400 hover:text-white hover:bg-surface-200 transition-colors"
+          >
+            <Menu className="w-6 h-6" />
+          </button>
+          <span className="ml-3 font-bold text-white">Syntax Admin</span>
+        </div>
+
+        <div className="p-4 sm:p-8 max-w-6xl mx-auto">
           <Routes>
             <Route path="/" element={
               <div className="space-y-6">
-                <h1 className="text-3xl font-bold text-white">Dashboard Overview</h1>
-                <p className="text-slate-400">Welcome to your secure command center. Use the sidebar to manage content.</p>
+                <h1 className="text-2xl sm:text-3xl font-bold text-white">Dashboard Overview</h1>
+                <p className="text-slate-400 text-sm sm:text-base">Welcome to your secure command center. Use the sidebar to manage content.</p>
               </div>
             } />
             <Route path="/reviews" element={<ReviewManager />} />
