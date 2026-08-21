@@ -52,6 +52,16 @@ export interface ArticleItem {
   created_at?: string;
 }
 
+export interface ArticleComment {
+  id: string;
+  article_id: string;
+  full_name: string;
+  email?: string;
+  comment_text: string;
+  is_approved: boolean;
+  created_at: string;
+}
+
 export interface TestimonialItem {
   id: string;
   name?: string; // fallback

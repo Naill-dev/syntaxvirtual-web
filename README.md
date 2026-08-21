@@ -67,6 +67,17 @@ CREATE TABLE estimator_inquiries (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- 5. Article Comments Table
+CREATE TABLE article_comments (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  article_id UUID NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
+  full_name TEXT NOT NULL,
+  email TEXT,
+  comment_text TEXT NOT NULL,
+  is_approved BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Row Level Security (RLS) Policies
 ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
 ALTER TABLE articles ENABLE ROW LEVEL SECURITY;
@@ -102,6 +113,12 @@ CREATE POLICY "Allow authenticated full access contact" ON contact_submissions
   FOR ALL TO authenticated USING (true);
 CREATE POLICY "Allow authenticated full access estimator" ON estimator_inquiries
   FOR ALL TO authenticated USING (true);
+
+-- Article Comments Policies
+ALTER TABLE article_comments ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public insert article comments" ON article_comments FOR INSERT TO public WITH CHECK (true);
+CREATE POLICY "Allow public read approved article comments" ON article_comments FOR SELECT TO public USING (is_approved = true);
+CREATE POLICY "Allow authenticated full access article comments" ON article_comments FOR ALL TO authenticated USING (true);
 ```
 
 

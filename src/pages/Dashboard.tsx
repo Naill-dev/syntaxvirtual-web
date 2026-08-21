@@ -7,11 +7,13 @@ import { DashboardLogin } from '../components/dashboard/DashboardLogin';
 import { ReviewManager } from '../components/dashboard/ReviewManager';
 import { ArticleManager } from '../components/dashboard/ArticleManager';
 import { ContactManager } from '../components/dashboard/ContactManager';
+import { CommentManager } from '../components/dashboard/CommentManager';
 
 export function Dashboard() {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [pendingComments, setPendingComments] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -19,16 +21,26 @@ export function Dashboard() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
+      if (session) fetchPendingComments();
     });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+      if (session) fetchPendingComments();
     });
 
     return () => subscription.unsubscribe();
   }, []);
+
+  const fetchPendingComments = async () => {
+    const { count } = await supabase
+      .from('article_comments')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_approved', false);
+    setPendingComments(count || 0);
+  };
 
   // Close sidebar on mobile when navigating
   useEffect(() => {
@@ -59,6 +71,12 @@ export function Dashboard() {
     { name: 'Overview', path: '/dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
     { name: 'Reviews', path: '/dashboard/reviews', icon: <MessageSquare className="w-4 h-4" /> },
     { name: 'Articles', path: '/dashboard/articles', icon: <BookOpen className="w-4 h-4" /> },
+    { 
+      name: 'Comments', 
+      path: '/dashboard/comments', 
+      icon: <MessageSquare className="w-4 h-4" />,
+      badge: pendingComments > 0 ? pendingComments : undefined 
+    },
     { name: 'Inquiries', path: '/dashboard/inquiries', icon: <Inbox className="w-4 h-4" /> },
   ];
 
@@ -99,8 +117,17 @@ export function Dashboard() {
                   : 'text-slate-400 hover:text-white hover:bg-surface-200'
               }`}
             >
-              {item.icon}
-              {item.name}
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center gap-3">
+                  {item.icon}
+                  {item.name}
+                </div>
+                {item.badge && (
+                  <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                    {item.badge}
+                  </span>
+                )}
+              </div>
             </Link>
           ))}
         </div>
@@ -140,6 +167,7 @@ export function Dashboard() {
             } />
             <Route path="/reviews" element={<ReviewManager />} />
             <Route path="/articles" element={<ArticleManager />} />
+            <Route path="/comments" element={<CommentManager />} />
             <Route path="/inquiries" element={<ContactManager />} />
           </Routes>
         </div>

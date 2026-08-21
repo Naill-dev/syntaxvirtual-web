@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { ArticleItem } from '../../types';
 import { X, Clock, Calendar, ArrowLeft } from 'lucide-react';
+import { ArticleComments } from './ArticleComments';
 
 interface ArticleModalProps {
   article: ArticleItem | null;
@@ -112,6 +113,9 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose }) 
                 return <p key={i} className="mb-4 text-slate-300 leading-relaxed">{paragraph}</p>;
               })}
             </div>
+
+            {/* Comments Section */}
+            <ArticleComments articleId={article.id} />
           </article>
         </div>
       </div>
