@@ -54,22 +54,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Brand Logo */}
-        <a href="/" className="flex items-center gap-3 group focus:outline-none">
+        <a href="/" className="flex items-center group focus:outline-none">
           <img
             src="/logo.png"
             alt="SyntaxVirtual Logo"
             className="h-12 sm:h-14 w-auto object-contain flex-shrink-0 group-hover:scale-105 transition-transform duration-300"
           />
-          <div className="flex flex-col">
-            <div className="flex items-center gap-1.5">
-              <span className="font-bold text-lg tracking-tight text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:via-accent-light group-hover:to-electric-light transition-all">
-                Syntax<span className="text-accent-violet">Virtual</span>
-              </span>
-            </div>
-            <span className="text-[10px] font-mono uppercase tracking-widest text-slate-400">
-              Crafting Digital Excellence
-            </span>
-          </div>
         </a>
 
         {/* Desktop Navigation Links */}
