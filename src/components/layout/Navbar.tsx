@@ -55,10 +55,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Brand Logo */}
         <a href="/" className="flex items-center gap-3 group focus:outline-none">
-          <img 
-            src="/logo.png" 
-            alt="SyntaxVirtual Logo" 
-            className="h-8 sm:h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-300"
+          <img
+            src="/logo.png"
+            alt="SyntaxVirtual Logo"
+            className="h-11 sm:h-13 w-auto object-contain group-hover:scale-105 transition-transform duration-300"
           />
           <div className="flex flex-col">
             <div className="flex items-center gap-1.5">
