@@ -3,7 +3,7 @@ import { Quote, PlusCircle } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
 import { TestimonialItem } from '../../types';
 import { StarRating } from '../reviews/StarRating';
-import { ReviewModal } from '../modals/ReviewModal';
+import { ReviewModal } from '../reviews/ReviewModal';
 
 export const TestimonialsSection: React.FC = () => {
   const [reviews, setReviews] = useState<TestimonialItem[]>([]);

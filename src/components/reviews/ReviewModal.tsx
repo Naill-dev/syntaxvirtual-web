@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
-import { StarRating } from '../reviews/StarRating';
+import { StarRating } from './StarRating';
 import { supabase } from '../../lib/supabaseClient';
 import toast from 'react-hot-toast';
 
