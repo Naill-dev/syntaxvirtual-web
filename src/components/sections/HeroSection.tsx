@@ -94,12 +94,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenBooking }) => {
                 <div className="text-xs text-slate-400 font-sans">Edge Latency TTFB</div>
               </div>
               <div>
-                <div className="text-2xl font-bold font-mono text-electric-light">120+</div>
-                <div className="text-xs text-slate-400 font-sans">Systems Delivered</div>
+                <div className="text-2xl font-bold font-mono text-electric-light">Zero</div>
+                <div className="text-xs text-slate-400 font-sans">Technical Debt</div>
               </div>
               <div>
-                <div className="text-2xl font-bold font-mono text-emerald-400">99.99%</div>
-                <div className="text-xs text-slate-400 font-sans">Uptime Ready SLA</div>
+                <div className="text-2xl font-bold font-mono text-emerald-400">100%</div>
+                <div className="text-xs text-slate-400 font-sans">Bespoke Architecture</div>
               </div>
             </div>
           </div>

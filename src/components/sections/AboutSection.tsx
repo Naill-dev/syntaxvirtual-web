@@ -4,10 +4,10 @@ import { GlowingCard } from '../visual/GlowingCard';
 
 export const AboutSection: React.FC = () => {
   const stats = [
-    { value: '120+', label: 'Projects Delivered', desc: 'Across US, Europe & Global Markets' },
-    { value: '99.8%', label: 'Average Lighthouse Score', desc: 'Sub-second real-world performance' },
-    { value: '100%', label: 'On-Time Handover Rate', desc: 'Rigorous agile sprint management' },
-    { value: '12+', label: 'Enterprise Clients', desc: 'Fintech, SaaS, Healthcare & Luxury' },
+    { value: '<100ms', label: 'Sub-100ms TTFB', desc: 'Global edge-cached response times' },
+    { value: 'Zero', label: 'Technical Debt', desc: 'Strictly typed, modular, and tested' },
+    { value: 'Agile', label: 'Modern Execution', desc: 'Iterative, transparent sprint cycles' },
+    { value: '100%', label: 'Bespoke Code', desc: 'Hand-crafted architecture, no templates' },
   ];
 
   const corePillars = [
@@ -83,7 +83,7 @@ export const AboutSection: React.FC = () => {
               <div className="flex items-center gap-4">
                 <div className="relative w-16 h-16 rounded-2xl overflow-hidden border-2 border-accent-purple shadow-glow-sm bg-slate-800">
                   <img
-                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80"
+                    src="/assets/founder.jpg"
                     alt="Nail Mammadov"
                     className="w-full h-full object-cover"
                   />

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Calculator, Check, ArrowRight, Sparkles, Sliders, Shield, Zap } from 'lucide-react';
+import { supabase } from '../../lib/supabaseClient';
+import toast from 'react-hot-toast';
 
 interface ProjectEstimatorProps {
   onApplyEstimate: (summary: string) => void;
@@ -8,11 +10,9 @@ interface ProjectEstimatorProps {
 export const ProjectEstimator: React.FC<ProjectEstimatorProps> = ({ onApplyEstimate }) => {
   const [projectType, setProjectType] = useState<'webapp' | 'ecommerce' | 'website' | 'uiux' | 'saas'>('webapp');
   const [speed, setSpeed] = useState<'standard' | 'rush'>('standard');
-  const [selectedFeatures, setSelectedFeatures] = useState<string[]>([
-    'seo',
-    'auth',
-    'responsive'
-  ]);
+  const [selectedFeatures, setSelectedFeatures] = useState<string[]>(['seo', 'auth', 'responsive']);
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const projectTypes = [
     { id: 'webapp', label: 'Custom Web Application', baseCost: 4500, time: '3-5 Weeks' },
@@ -29,7 +29,7 @@ export const ProjectEstimator: React.FC<ProjectEstimatorProps> = ({ onApplyEstim
     { id: 'ai', label: 'AI LLM Workflow / Vector Search Integration', cost: 1400 },
     { id: 'realtime', label: 'Real-Time WebSockets & Telemetry', cost: 1100 },
     { id: 'payment', label: 'Stripe / Multi-Currency Global Checkout', cost: 900 },
-    { id: 'cms', label: 'Headless CMS Content Engine (Sanity/Strapi)', cost: 750 },
+    { id: 'cms', label: 'Headless CMS Integration', cost: 700 },
     { id: 'sla', label: '3-Month Priority SLA & Cloud Optimization', cost: 1200 },
   ];
 
@@ -48,20 +48,45 @@ export const ProjectEstimator: React.FC<ProjectEstimatorProps> = ({ onApplyEstim
   const speedMultiplier = speed === 'rush' ? 1.25 : 1.0;
   const estimatedTotal = Math.round((currentTypeObj.baseCost + featuresTotal) * speedMultiplier);
 
-  const handleApply = () => {
+  const handleApply = async () => {
+    if (!email) {
+      toast.error('Please enter your email to save the estimate.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    
     const selectedFeatureLabels = selectedFeatures
       .map((fId) => featuresList.find((f) => f.id === fId)?.label)
-      .filter(Boolean)
-      .join(', ');
+      .filter(Boolean);
 
-    const summary = `Project Scope: ${currentTypeObj.label} | Speed: ${speed === 'rush' ? 'Expedited Delivery' : 'Standard Sprint'} | Selected Features: [${selectedFeatureLabels}] | Estimated Tier: ~$${estimatedTotal.toLocaleString()}`;
-    
-    onApplyEstimate(summary);
+    const scopeData = {
+      type: currentTypeObj.label,
+      features: selectedFeatureLabels,
+      speed
+    };
 
-    // Scroll to contact form
-    const contactEl = document.getElementById('contact');
-    if (contactEl) {
-      contactEl.scrollIntoView({ behavior: 'smooth' });
+    try {
+      const { error } = await supabase.from('estimator_inquiries').insert([{
+        email,
+        project_scope: scopeData,
+        budget_range: `$${estimatedTotal.toLocaleString()}`
+      }]);
+
+      if (error) throw error;
+      
+      toast.success('Estimate saved! Scroll down to Contact to continue.');
+      setEmail('');
+      
+      const summary = `Project Scope: ${currentTypeObj.label} | Speed: ${speed === 'rush' ? 'Expedited Delivery' : 'Standard Sprint'} | Selected Features: [${selectedFeatureLabels.join(', ')}] | Estimated Tier: ~$${estimatedTotal.toLocaleString()}`;
+      onApplyEstimate(summary);
+      
+      document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+    } catch (err: any) {
+      console.error(err);
+      toast.error('Failed to save estimate.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -254,15 +279,34 @@ export const ProjectEstimator: React.FC<ProjectEstimatorProps> = ({ onApplyEstim
               </div>
             </div>
 
-            {/* Action Button */}
-            <button
-              type="button"
-              onClick={handleApply}
-              className="w-full py-4 rounded-xl bg-gradient-to-r from-accent-purple via-accent-violet to-electric-DEFAULT hover:shadow-glow-md text-white font-semibold text-sm transition-all flex items-center justify-center gap-2 shadow-glow-sm"
-            >
-              <span>Transfer Scope to Contact Form</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
+            {/* Action Button & Inquiry Form */}
+            <div className="space-y-3 pt-4 border-t border-slate-800">
+              <input
+                type="email"
+                placeholder="Enter email to save this estimate..."
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl bg-surface-100/50 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-accent-purple transition-all"
+              />
+              <button
+                type="button"
+                onClick={handleApply}
+                disabled={isSubmitting}
+                className="w-full py-4 rounded-xl bg-gradient-to-r from-accent-purple via-accent-violet to-electric-DEFAULT hover:shadow-glow-md text-white font-semibold text-sm transition-all flex items-center justify-center gap-2 shadow-glow-sm disabled:opacity-70"
+              >
+                {isSubmitting ? (
+                  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                ) : (
+                  <>
+                    <span>Save & Discuss Project</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>

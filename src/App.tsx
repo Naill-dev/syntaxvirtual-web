@@ -1,78 +1,27 @@
-import { useState } from 'react';
-import { Navbar } from './components/layout/Navbar';
-import { Footer } from './components/layout/Footer';
-import { ParticleBackground } from './components/visual/ParticleBackground';
-import { HeroSection } from './components/sections/HeroSection';
-import { TechMarquee } from './components/sections/TechMarquee';
-import { ServicesSection } from './components/sections/ServicesSection';
-import { PortfolioSection } from './components/sections/PortfolioSection';
-import { ProjectEstimator } from './components/sections/ProjectEstimator';
-import { AboutSection } from './components/sections/AboutSection';
-import { ProcessSection } from './components/sections/ProcessSection';
-import { BlogSection } from './components/sections/BlogSection';
-import { TestimonialsSection } from './components/sections/TestimonialsSection';
-import { FaqSection } from './components/sections/FaqSection';
-import { ContactSection } from './components/sections/ContactSection';
-
-import { ProjectModal } from './components/modals/ProjectModal';
-import { ArticleModal } from './components/modals/ArticleModal';
-import { BookingModal } from './components/modals/BookingModal';
-
-import { PortfolioItem, ArticleItem } from './types';
+import { Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import { Home } from './pages/Home';
+import { Dashboard } from './pages/Dashboard';
 
 function App() {
-  const [selectedProject, setSelectedProject] = useState<PortfolioItem | null>(null);
-  const [selectedArticle, setSelectedArticle] = useState<ArticleItem | null>(null);
-  const [isBookingOpen, setIsBookingOpen] = useState(false);
-
-  // Handle estimate apply
-  const handleApplyEstimate = (summary: string) => {
-    // In a real app, this would populate a state variable passed to the Contact form
-    console.log("Estimate applied: ", summary);
-    // Note: Scroll is handled within the component
-  };
-
   return (
-    <div className="relative min-h-screen font-sans selection:bg-accent-purple/30 selection:text-white flex flex-col">
-      <ParticleBackground />
-      
-      <Navbar onOpenBooking={() => setIsBookingOpen(true)} />
-      
-      <main className="flex-1 relative z-10">
-        <HeroSection onOpenBooking={() => setIsBookingOpen(true)} />
-        <TechMarquee />
-        <ServicesSection 
-          onSelectService={() => setIsBookingOpen(true)} // Open booking for service inquiry
-          onOpenBooking={() => setIsBookingOpen(true)}
-        />
-        <PortfolioSection onSelectProject={setSelectedProject} />
-        <ProjectEstimator onApplyEstimate={handleApplyEstimate} />
-        <AboutSection />
-        <ProcessSection />
-        <BlogSection onSelectArticle={setSelectedArticle} />
-        <TestimonialsSection />
-        <FaqSection />
-        <ContactSection onOpenBooking={() => setIsBookingOpen(true)} />
-      </main>
-
-      <Footer />
-
-      {/* Global Modals */}
-      <ProjectModal 
-        project={selectedProject} 
-        onClose={() => setSelectedProject(null)} 
+    <>
+      <Toaster 
+        position="bottom-right"
+        toastOptions={{
+          style: {
+            background: '#111827',
+            color: '#fff',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '12px',
+          },
+        }}
       />
-      
-      <ArticleModal 
-        article={selectedArticle} 
-        onClose={() => setSelectedArticle(null)} 
-      />
-
-      <BookingModal 
-        isOpen={isBookingOpen} 
-        onClose={() => setIsBookingOpen(false)} 
-      />
-    </div>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/dashboard/*" element={<Dashboard />} />
+      </Routes>
+    </>
   );
 }
 
