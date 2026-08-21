@@ -147,8 +147,8 @@ export function assertZeroJank() {
       </div>
 
       {/* Code Body */}
-      <div className="p-4 sm:p-5 font-mono text-xs sm:text-sm overflow-x-auto text-slate-300 leading-relaxed bg-[#070A1E]/95">
-        <pre className="text-slate-300 whitespace-pre">
+      <div className="p-4 sm:p-5 font-mono text-[11px] sm:text-sm overflow-x-auto text-slate-300 leading-relaxed bg-[#070A1E]/95">
+        <pre className="text-slate-300 whitespace-pre-wrap break-words sm:whitespace-pre">
           <code>
             {currentSnippet.code.split('\n').map((line, i) => {
               // Highlight comments
@@ -158,7 +158,7 @@ export function assertZeroJank() {
               // Highlight imports/keywords
               return (
                 <div key={i} className="flex">
-                  <span className="w-6 select-none text-slate-600 text-right mr-4">{i + 1}</span>
+                  <span className="w-6 select-none text-slate-600 text-right mr-4 shrink-0">{i + 1}</span>
                   <span className="flex-1">
                     {line.replace(/export|default|async|function|const|let|var|import|from|return/g, (m) => `\x00${m}\x00`)
                       .split('\x00')
@@ -180,20 +180,20 @@ export function assertZeroJank() {
       </div>
 
       {/* Terminal Live Benchmarks Footer */}
-      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-800/80 bg-surface-300/90 px-4 py-2.5 text-xs font-mono">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-slate-800/80 bg-surface-300/90 px-4 py-3 text-[11px] sm:text-xs font-mono">
         <div className="flex items-center gap-2 text-slate-400">
-          <span className="flex h-2 w-2 relative">
+          <span className="flex h-2 w-2 relative shrink-0">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
           </span>
           <span>Engine: <span className="text-white font-medium">Syntax v3.4 Active</span></span>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="grid grid-cols-2 sm:flex sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
           {currentSnippet.metrics?.map((m, idx) => (
             <div key={idx} className="flex items-center gap-1">
               <span className="text-slate-400">{m.label}:</span>
-              <span className={`font-semibold ${m.color}`}>{m.value}</span>
+              <span className={`font-semibold ${m.color} truncate`}>{m.value}</span>
             </div>
           ))}
         </div>

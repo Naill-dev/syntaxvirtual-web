@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Send, Check, ArrowUp, Code2, Users, MessageSquare, MessageCircle, Mail } from 'lucide-react';
+import { FaLinkedin, FaInstagram, FaGithub, FaDiscord } from 'react-icons/fa';
 
 export const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -159,47 +160,40 @@ export const Footer: React.FC = () => {
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-4 text-slate-400">
               <a
-                href="https://github.com"
+                href="https://www.linkedin.com/in/nail-məmmədov"
                 target="_blank"
                 rel="noreferrer"
                 className="hover:text-white transition-colors"
-                title="Code"
+                title="LinkedIn"
               >
-                <Code2 className="w-4 h-4" />
+                <FaLinkedin className="w-5 h-5" />
               </a>
               <a
-                href="https://linkedin.com"
+                href="https://www.instagram.com/nail.coding"
                 target="_blank"
                 rel="noreferrer"
                 className="hover:text-white transition-colors"
-                title="Network"
+                title="Instagram"
               >
-                <Users className="w-4 h-4" />
+                <FaInstagram className="w-5 h-5" />
               </a>
               <a
-                href="https://x.com"
+                href="https://github.com/Naill-dev"
                 target="_blank"
                 rel="noreferrer"
                 className="hover:text-white transition-colors"
-                title="Social"
+                title="GitHub"
               >
-                <MessageSquare className="w-4 h-4" />
+                <FaGithub className="w-5 h-5" />
               </a>
               <a
-                href="https://t.me"
+                href="https://discord.com/users/synt4x777"
                 target="_blank"
                 rel="noreferrer"
                 className="hover:text-white transition-colors"
-                title="Telegram"
+                title="Discord"
               >
-                <MessageCircle className="w-4 h-4" />
-              </a>
-              <a
-                href="mailto:contact@syntaxvirtual.com"
-                className="hover:text-white transition-colors"
-                title="Email"
-              >
-                <Mail className="w-4 h-4" />
+                <FaDiscord className="w-5 h-5" />
               </a>
             </div>
 
