@@ -58,7 +58,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
           <img
             src={logoImage}
             alt="SyntaxVirtual Logo"
-            className="h-10 sm:h-12 w-auto object-contain flex-shrink-0 group-hover:scale-105 transition-transform duration-300"
+            className="h-16 sm:h-20 w-auto object-contain flex-shrink-0 group-hover:scale-105 transition-transform duration-300"
           />
         </a>
 
