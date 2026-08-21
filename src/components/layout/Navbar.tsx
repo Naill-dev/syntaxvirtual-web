@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, ArrowUpRight, Sparkles, Code2, PhoneCall } from 'lucide-react';
+import { Menu, X, ArrowUpRight, Sparkles, PhoneCall } from 'lucide-react';
 
 interface NavbarProps {
   onOpenBooking: () => void;
@@ -58,7 +58,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
           <img
             src="/logo.png"
             alt="SyntaxVirtual Logo"
-            className="h-11 sm:h-13 w-auto object-contain group-hover:scale-105 transition-transform duration-300"
+            className="h-12 sm:h-14 w-auto object-contain flex-shrink-0 group-hover:scale-105 transition-transform duration-300"
           />
           <div className="flex flex-col">
             <div className="flex items-center gap-1.5">
@@ -95,7 +95,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
 
         {/* Action CTAs */}
         <div className="hidden sm:flex items-center gap-3">
-          {/* Availability Beacon */}
           <div className="hidden xl:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span>Available for Q3/Q4</span>
