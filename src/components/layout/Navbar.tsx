@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, ArrowUpRight, Sparkles, PhoneCall } from 'lucide-react';
-import logoImage from '../../assets/logo-transparent.png';
+import logoImage from '../../assets/logo.png';
 
 interface NavbarProps {
   onOpenBooking: () => void;
@@ -54,22 +54,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-        <a href="/" className="flex items-center gap-2 sm:gap-3 group focus:outline-none">
+        <a href="/" className="flex items-center group focus:outline-none">
           <img
             src={logoImage}
             alt="SyntaxVirtual Logo"
-            className="h-10 w-10 object-contain flex-shrink-0 group-hover:scale-105 transition-transform duration-300"
+            className="h-10 sm:h-12 w-auto object-contain flex-shrink-0 group-hover:scale-105 transition-transform duration-300"
           />
-          <div className="flex flex-col">
-            <div className="flex items-center gap-1.5">
-              <span className="font-bold text-lg tracking-tight text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:via-accent-light group-hover:to-electric-light transition-all">
-                Syntax<span className="text-accent-violet">Virtual</span>
-              </span>
-            </div>
-            <span className="text-[10px] font-mono uppercase tracking-widest text-slate-400">
-              Crafting Digital Excellence
-            </span>
-          </div>
         </a>
 
         {/* Desktop Navigation Links */}
