@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, ArrowUpRight, Sparkles, PhoneCall } from 'lucide-react';
+import logoImage from '../../assets/logo.png';
 
 interface NavbarProps {
   onOpenBooking: () => void;
@@ -56,7 +57,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
         {/* Brand Logo */}
         <a href="/" className="flex items-center group focus:outline-none">
           <img
-            src="/logo.png"
+            src={logoImage}
             alt="SyntaxVirtual Logo"
             className="h-12 sm:h-14 w-auto object-contain flex-shrink-0 group-hover:scale-105 transition-transform duration-300"
           />
