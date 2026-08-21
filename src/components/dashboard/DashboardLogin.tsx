@@ -23,9 +23,8 @@ export function DashboardLogin() {
     e.preventDefault();
     setLoading(true);
 
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!passwordRegex.test(password)) {
-      toast.error('Password must be at least 8 characters long, include uppercase, lowercase, number, and special character.');
+    if (!email.trim() || !password.trim()) {
+      toast.error('Please enter both email and password.');
       setLoading(false);
       return;
     }
