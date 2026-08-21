@@ -122,24 +122,30 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({ onSelectProj
                 </div>
               </div>
 
-              {/* Card Footer: Metrics */}
-              <div className="px-6 py-4 border-t border-slate-800/80 bg-surface-200/50 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  {project.results.slice(0, 2).map((res, idx) => (
-                    <div key={idx}>
-                      <div className="text-xs font-bold font-mono text-emerald-400">
-                        {res.value}
-                      </div>
-                      <div className="text-[10px] text-slate-400">
-                        {res.label}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="w-8 h-8 rounded-lg bg-surface-100 border border-slate-700/60 flex items-center justify-center text-slate-300 group-hover:text-white group-hover:border-accent-purple/50 group-hover:bg-accent-purple/20 transition-all">
-                  <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                </div>
+              {/* Card Footer: Links */}
+              <div className="px-6 py-4 border-t border-slate-800/80 bg-surface-200/50 flex flex-wrap items-center gap-3">
+                {project.liveUrl && (
+                  <a
+                    href={project.liveUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex-1 text-center py-2 px-3 rounded-lg bg-accent-purple/20 border border-accent-purple/50 text-xs font-semibold text-accent-light hover:bg-accent-purple/40 transition-colors"
+                  >
+                    Live Demo
+                  </a>
+                )}
+                {project.githubUrl && (
+                  <a
+                    href={project.githubUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex-1 text-center py-2 px-3 rounded-lg bg-surface-100 border border-slate-700 text-xs font-semibold text-slate-300 hover:text-white hover:bg-surface-200 transition-colors"
+                  >
+                    Source Code
+                  </a>
+                )}
               </div>
             </div>
           ))}

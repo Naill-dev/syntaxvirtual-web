@@ -4,10 +4,10 @@ import { GlowingCard } from '../visual/GlowingCard';
 
 export const AboutSection: React.FC = () => {
   const stats = [
-    { value: '<100ms', label: 'Sub-100ms TTFB', desc: 'Global edge-cached response times' },
+    { value: '100/100', label: 'Lighthouse Score', desc: 'Perfect performance & SEO' },
+    { value: '< 30ms', label: 'Edge Latency (TTFB)', desc: 'Global edge-cached response times' },
     { value: 'Zero', label: 'Technical Debt', desc: 'Strictly typed, modular, and tested' },
-    { value: 'Agile', label: 'Modern Execution', desc: 'Iterative, transparent sprint cycles' },
-    { value: '100%', label: 'Bespoke Code', desc: 'Hand-crafted architecture, no templates' },
+    { value: '100%', label: 'Bespoke Architecture', desc: 'Hand-crafted, no templates' },
   ];
 
   const corePillars = [

@@ -90,8 +90,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenBooking }) => {
                 <div className="text-xs text-slate-400 font-sans">Lighthouse Score</div>
               </div>
               <div>
-                <div className="text-2xl font-bold font-mono text-accent-lavender">&lt; 30ms</div>
-                <div className="text-xs text-slate-400 font-sans">Edge Latency TTFB</div>
+                <div className="text-2xl font-bold font-mono text-accent-lavender">&lt; 30 ms</div>
+                <div className="text-xs text-slate-400 font-sans">Edge Latency (TTFB)</div>
               </div>
               <div>
                 <div className="text-2xl font-bold font-mono text-electric-light">Zero</div>
