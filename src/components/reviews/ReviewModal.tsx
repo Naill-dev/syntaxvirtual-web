@@ -9,6 +9,8 @@ interface ReviewModalProps {
   onClose: () => void;
 }
 
+import { sanitizeInput } from '../../lib/sanitize';
+
 export const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose }) => {
   const [rating, setRating] = useState(5);
   const [fullName, setFullName] = useState('');
@@ -41,10 +43,10 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose }) => 
         .from('reviews')
         .insert([
           {
-            full_name: fullName,
-            role_company: roleCompany,
+            full_name: sanitizeInput(fullName),
+            role_company: sanitizeInput(roleCompany),
             rating,
-            review_text: reviewText,
+            review_text: sanitizeInput(reviewText),
             is_approved: false // default
           }
         ]);

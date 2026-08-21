@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
+import { logAuditAction } from '../../lib/audit';
 import { PortfolioProject } from '../../types';
 import toast from 'react-hot-toast';
 import { Plus, Edit2, Trash2, X, UploadCloud, Briefcase, ExternalLink } from 'lucide-react';
@@ -121,6 +122,8 @@ export const PortfolioManager: React.FC = () => {
           .eq('id', editingProject.id);
 
         if (error) throw error;
+        const { data: userData } = await supabase.auth.getUser();
+        await logAuditAction(userData.user?.email || 'unknown', 'updated_portfolio', { project_id: editingProject.id });
         toast.success('Project updated');
       } else {
         const { error } = await supabase
@@ -128,6 +131,8 @@ export const PortfolioManager: React.FC = () => {
           .insert([projectData]);
 
         if (error) throw error;
+        const { data: userData } = await supabase.auth.getUser();
+        await logAuditAction(userData.user?.email || 'unknown', 'added_portfolio', { title });
         toast.success('Project added');
       }
 
@@ -146,6 +151,10 @@ export const PortfolioManager: React.FC = () => {
     try {
       const { error } = await supabase.from('portfolio').delete().eq('id', id);
       if (error) throw error;
+      
+      const { data: userData } = await supabase.auth.getUser();
+      await logAuditAction(userData.user?.email || 'unknown', 'deleted_portfolio', { project_id: id });
+
       setProjects(projects.filter(p => p.id !== id));
       toast.success('Project deleted');
     } catch (err) {

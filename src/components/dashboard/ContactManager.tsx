@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
+import { logAuditAction } from '../../lib/audit';
 import { Trash2, CheckCircle, Mail } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -53,6 +54,10 @@ export function ContactManager() {
     try {
       const { error } = await supabase.from('contact_submissions').delete().eq('id', id);
       if (error) throw error;
+      
+      const { data: userData } = await supabase.auth.getUser();
+      await logAuditAction(userData.user?.email || 'unknown', 'deleted_contact', { contact_id: id });
+
       toast.success('Submission deleted');
       setContacts(contacts.filter(c => c.id !== id));
     } catch (err) {
@@ -66,6 +71,10 @@ export function ContactManager() {
     try {
       const { error } = await supabase.from('estimator_inquiries').delete().eq('id', id);
       if (error) throw error;
+      
+      const { data: userData } = await supabase.auth.getUser();
+      await logAuditAction(userData.user?.email || 'unknown', 'deleted_estimate', { estimate_id: id });
+
       toast.success('Inquiry deleted');
       setEstimates(estimates.filter(e => e.id !== id));
     } catch (err) {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { ArticleComment } from '../../types';
+import { sanitizeInput } from '../../lib/sanitize';
 import toast from 'react-hot-toast';
 import { MessageSquare, User, Send, Calendar } from 'lucide-react';
 
@@ -45,9 +46,9 @@ export const ArticleComments: React.FC<ArticleCommentsProps> = ({ articleId }) =
       const { error } = await supabase.from('article_comments').insert([
         {
           article_id: articleId,
-          full_name: formData.fullName,
-          email: formData.email,
-          comment_text: formData.commentText,
+          full_name: sanitizeInput(formData.fullName),
+          email: sanitizeInput(formData.email),
+          comment_text: sanitizeInput(formData.commentText),
           is_approved: false, // Default to pending
         },
       ]);

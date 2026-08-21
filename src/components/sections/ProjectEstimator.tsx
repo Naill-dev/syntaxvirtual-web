@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Calculator, Check, ArrowRight, Sparkles, Sliders, Shield, Zap } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
+import { sanitizeInput } from '../../lib/sanitize';
 import toast from 'react-hot-toast';
 
 interface ProjectEstimatorProps {
@@ -68,7 +69,7 @@ export const ProjectEstimator: React.FC<ProjectEstimatorProps> = ({ onApplyEstim
 
     try {
       const { error } = await supabase.from('estimator_inquiries').insert([{
-        email,
+        email: sanitizeInput(email),
         project_scope: scopeData,
         budget_range: `$${estimatedTotal.toLocaleString()}`
       }]);

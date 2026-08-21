@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
+import { logAuditAction } from '../../lib/audit';
 import { Trash2, Edit3, Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -33,6 +34,9 @@ export function ArticleManager() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const { data: userData } = await supabase.auth.getUser();
+      const email = userData.user?.email || 'unknown';
+
       if (currentArticle.id) {
         // Update
         const { error } = await supabase
@@ -40,6 +44,7 @@ export function ArticleManager() {
           .update(currentArticle)
           .eq('id', currentArticle.id);
         if (error) throw error;
+        await logAuditAction(email, 'updated_article', { article_id: currentArticle.id });
         toast.success('Article updated');
       } else {
         // Insert
@@ -47,6 +52,7 @@ export function ArticleManager() {
           .from('articles')
           .insert([currentArticle]);
         if (error) throw error;
+        await logAuditAction(email, 'created_article', { title: currentArticle.title });
         toast.success('Article created');
       }
       setIsEditing(false);
@@ -62,11 +68,15 @@ export function ArticleManager() {
     try {
       const { error } = await supabase.from('articles').delete().eq('id', id);
       if (error) throw error;
+      
+      const { data: userData } = await supabase.auth.getUser();
+      await logAuditAction(userData.user?.email || 'unknown', 'deleted_article', { article_id: id });
+      
       toast.success('Article deleted');
       setArticles(articles.filter(a => a.id !== id));
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      toast.error('Failed to delete article');
+      toast.error(err.message || 'Failed to delete article');
     }
   };
 

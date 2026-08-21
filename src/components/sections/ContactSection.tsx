@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import confetti from 'canvas-confetti';
 import { Send, CheckCircle2, MessageCircle, Mail, PhoneCall, Sparkles } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
+import { sanitizeInput } from '../../lib/sanitize';
 import toast from 'react-hot-toast';
 
 interface ContactSectionProps {
@@ -25,10 +26,10 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenBooking })
       const { error } = await supabase
         .from('contact_submissions')
         .insert([{
-          full_name: formData.name,
-          email: formData.email,
-          project_type: formData.projectType,
-          message: formData.details
+          full_name: sanitizeInput(formData.name),
+          email: sanitizeInput(formData.email),
+          project_type: sanitizeInput(formData.projectType),
+          message: sanitizeInput(formData.details)
         }]);
 
       if (error) throw error;

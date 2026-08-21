@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
+import { logAuditAction } from '../../lib/audit';
 import { Trash2, CheckCircle, XCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -36,11 +37,15 @@ export function ReviewManager() {
         .eq('id', id);
 
       if (error) throw error;
-      toast.success(`Review ${!currentStatus ? 'approved' : 'hidden'}`);
+      
+      const { data: userData } = await supabase.auth.getUser();
+      await logAuditAction(userData.user?.email || 'unknown', currentStatus ? 'unapproved_review' : 'approved_review', { review_id: id });
+
+      toast.success(`Review ${!currentStatus ? 'approved' : 'hidden'} successfully`);
       setReviews(reviews.map(r => r.id === id ? { ...r, is_approved: !currentStatus } : r));
     } catch (err) {
       console.error(err);
-      toast.error('Failed to update status');
+      toast.error('Failed to update review status');
     }
   };
 
@@ -50,6 +55,10 @@ export function ReviewManager() {
     try {
       const { error } = await supabase.from('reviews').delete().eq('id', id);
       if (error) throw error;
+      
+      const { data: userData } = await supabase.auth.getUser();
+      await logAuditAction(userData.user?.email || 'unknown', 'deleted_review', { review_id: id });
+
       toast.success('Review deleted');
       setReviews(reviews.filter(r => r.id !== id));
     } catch (err) {

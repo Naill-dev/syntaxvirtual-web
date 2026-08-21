@@ -137,6 +137,27 @@ CREATE POLICY "Allow authenticated full access article comments" ON article_comm
 ALTER TABLE portfolio ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read portfolio" ON portfolio FOR SELECT TO public USING (true);
 CREATE POLICY "Allow authenticated full access portfolio" ON portfolio FOR ALL TO authenticated USING (true);
+-- 7. Audit Log Table
+CREATE TABLE audit_log (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_email TEXT NOT NULL,
+  action TEXT NOT NULL,
+  details JSONB,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Audit Log Policies
+ALTER TABLE audit_log ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow authenticated insert audit_log" ON audit_log FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "Allow authenticated read audit_log" ON audit_log FOR SELECT TO authenticated USING (true);
 ```
+
+## CORS Configuration
+To ensure maximum security, configure your Supabase API CORS settings:
+1. Go to your Supabase Dashboard -> API Settings
+2. Under "CORS Settings", set the allowed origins to:
+   - `https://syntaxvirtual.com`
+   - `https://syntaxvirtual-web.vercel.app` (for preview environments)
+   - `http://localhost:5173` (for local development)
 
 

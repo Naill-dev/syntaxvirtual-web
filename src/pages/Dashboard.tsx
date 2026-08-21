@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { LogOut, LayoutDashboard, MessageSquare, BookOpen, Inbox, Menu, X, Briefcase } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 import { DashboardLogin } from '../components/dashboard/DashboardLogin';
 import { ReviewManager } from '../components/dashboard/ReviewManager';
@@ -42,6 +43,33 @@ export function Dashboard() {
       .eq('is_approved', false);
     setPendingComments(count || 0);
   };
+
+  // Session timeout logic (30 minutes)
+  useEffect(() => {
+    if (!session) return;
+
+    let timeoutId: ReturnType<typeof setTimeout>;
+    
+    const resetTimeout = () => {
+      clearTimeout(timeoutId);
+      // 30 minutes in milliseconds
+      timeoutId = setTimeout(async () => {
+        await supabase.auth.signOut();
+        toast.error('Session expired. Please login again.');
+        navigate('/dashboard');
+      }, 30 * 60 * 1000);
+    };
+
+    const events = ['mousemove', 'keypress', 'scroll', 'click'];
+    events.forEach(e => window.addEventListener(e, resetTimeout));
+    
+    resetTimeout();
+
+    return () => {
+      clearTimeout(timeoutId);
+      events.forEach(e => window.removeEventListener(e, resetTimeout));
+    };
+  }, [session, navigate]);
 
   // Close sidebar on mobile when navigating
   useEffect(() => {

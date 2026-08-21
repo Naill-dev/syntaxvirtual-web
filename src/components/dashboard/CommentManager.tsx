@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
-import { ArticleComment, ArticleItem } from '../../types';
+import { logAuditAction } from '../../lib/audit';
+import { ArticleComment } from '../../types';
 import toast from 'react-hot-toast';
 import { CheckCircle, XCircle, Trash2, Search, MessageSquare } from 'lucide-react';
 
@@ -37,6 +38,10 @@ export const CommentManager: React.FC = () => {
         .eq('id', id);
 
       if (error) throw error;
+      
+      const { data: userData } = await supabase.auth.getUser();
+      await logAuditAction(userData.user?.email || 'unknown', currentStatus ? 'unapproved_comment' : 'approved_comment', { comment_id: id });
+
       setComments(comments.map(c => c.id === id ? { ...c, is_approved: !currentStatus } : c));
       toast.success(currentStatus ? 'Comment hidden' : 'Comment approved');
     } catch (err) {
@@ -50,6 +55,10 @@ export const CommentManager: React.FC = () => {
     try {
       const { error } = await supabase.from('article_comments').delete().eq('id', id);
       if (error) throw error;
+      
+      const { data: userData } = await supabase.auth.getUser();
+      await logAuditAction(userData.user?.email || 'unknown', 'deleted_comment', { comment_id: id });
+
       setComments(comments.filter(c => c.id !== id));
       toast.success('Comment deleted');
     } catch (err) {

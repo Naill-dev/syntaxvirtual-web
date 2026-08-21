@@ -23,13 +23,25 @@ export function DashboardLogin() {
     e.preventDefault();
     setLoading(true);
 
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      toast.error('Password must be at least 8 characters long, include uppercase, lowercase, number, and special character.');
+      setLoading(false);
+      return;
+    }
+
     try {
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        if (error.message.toLowerCase().includes('rate limit') || error.status === 429) {
+          throw new Error('Too many failed attempts. Please try again later.');
+        }
+        throw error;
+      }
       toast.success('Login successful');
     } catch (error: any) {
       toast.error(error.message || 'Invalid credentials');
