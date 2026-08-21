@@ -66,7 +66,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose }) 
             {/* Author */}
             <div className="flex items-center gap-4 mb-10 pb-10 border-b border-slate-800">
               <img 
-                src={article.author?.avatar || '/assets/founder.jpg'} 
+                src={article.author?.avatar || '/founder.jpg'} 
                 alt={article.author?.name || 'Nail Mammadov'}
                 className="w-12 h-12 rounded-full border border-slate-700 object-cover"
               />

@@ -55,23 +55,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Brand Logo */}
         <a href="#hero" className="flex items-center gap-3 group focus:outline-none">
-          <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-accent-purple to-electric-DEFAULT p-0.5 shadow-glow-sm group-hover:shadow-glow-md transition-all">
-            <div className="w-full h-full bg-[#0A0F2C] rounded-[10px] flex items-center justify-center">
-              <svg
-                viewBox="0 0 24 24"
-                className="w-5 h-5 text-accent-lavender group-hover:scale-110 transition-transform duration-300"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polygon points="12 2 2 7 12 12 22 7 12 2" />
-                <polyline points="2 17 12 22 22 17" />
-                <polyline points="2 12 12 17 22 12" />
-              </svg>
-            </div>
-          </div>
+          <img 
+            src="/logo.png" 
+            alt="SyntaxVirtual Logo" 
+            className="h-8 sm:h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-300"
+          />
           <div className="flex flex-col">
             <div className="flex items-center gap-1.5">
               <span className="font-bold text-lg tracking-tight text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:via-accent-light group-hover:to-electric-light transition-all">

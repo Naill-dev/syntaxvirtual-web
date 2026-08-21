@@ -81,9 +81,9 @@ export const AboutSection: React.FC = () => {
           <div className="lg:col-span-5">
             <div className="relative rounded-3xl p-8 bg-surface-300/90 border border-slate-700/60 backdrop-blur-2xl shadow-glow-sm space-y-6">
               <div className="flex items-center gap-4">
-                <div className="relative w-16 h-16 rounded-2xl overflow-hidden border-2 border-accent-purple shadow-glow-sm bg-slate-800">
+                <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-accent-purple shadow-glow-sm bg-slate-800 flex-shrink-0">
                   <img
-                    src="/assets/founder.jpg"
+                    src="/founder.jpg"
                     alt="Nail Mammadov"
                     className="w-full h-full object-cover"
                   />
