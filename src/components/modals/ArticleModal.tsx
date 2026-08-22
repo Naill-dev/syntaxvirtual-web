@@ -43,7 +43,17 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose }) 
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto custom-scrollbar">
           <article className="max-w-3xl mx-auto px-6 py-8 sm:px-12 sm:py-12">
-            
+            {/* Cover Image */}
+            {(article.cover_image_url || article.coverImage) && (
+              <div className="mb-8 rounded-xl overflow-hidden border border-slate-800">
+                <img
+                  src={article.cover_image_url || article.coverImage}
+                  alt={article.title}
+                  className="w-full h-auto max-h-[400px] object-cover"
+                />
+              </div>
+            )}
+
             {/* Meta */}
             <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-slate-400 mb-6">
               <span className="px-3 py-1 rounded-md bg-accent-purple/10 border border-accent-purple/20 text-accent-light">
@@ -55,7 +65,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose }) 
               </span>
               <span className="flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5" />
-                {article.date}
+                {article.date || article.published_date}
               </span>
             </div>
 

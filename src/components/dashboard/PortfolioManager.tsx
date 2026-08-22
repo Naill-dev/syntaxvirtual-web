@@ -5,11 +5,13 @@ import { PortfolioProject } from '../../types';
 import toast from 'react-hot-toast';
 import { Plus, Edit2, Trash2, X, UploadCloud, Briefcase, ExternalLink } from 'lucide-react';
 import { FaGithub } from 'react-icons/fa';
+import { MediaLibrary } from './MediaLibrary';
 
 export const PortfolioManager: React.FC = () => {
   const [projects, setProjects] = useState<PortfolioProject[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<PortfolioProject | null>(null);
 
   // Form state
@@ -74,35 +76,12 @@ export const PortfolioManager: React.FC = () => {
     resetForm();
   };
 
-  const handleImageUpload = async (): Promise<string | null> => {
-    if (!imageFile) return currentImageUrl || null;
-
-    const fileExt = imageFile.name.split('.').pop();
-    const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
-    
-    try {
-      const { error: uploadError } = await supabase.storage
-        .from('portfolio-images')
-        .upload(fileName, imageFile);
-
-      if (uploadError) throw uploadError;
-
-      const { data } = supabase.storage.from('portfolio-images').getPublicUrl(fileName);
-      return data.publicUrl;
-    } catch (err) {
-      console.error('Upload error:', err);
-      toast.error('Failed to upload image');
-      return null;
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !githubUrl || !techStack) return;
 
     setIsSubmitting(true);
     try {
-      const imageUrl = await handleImageUpload();
       const techArray = techStack.split(',').map(t => t.trim()).filter(Boolean);
 
       const projectData = {
@@ -111,7 +90,7 @@ export const PortfolioManager: React.FC = () => {
         tech_stack: techArray,
         github_url: githubUrl,
         live_demo_url: liveDemoUrl || null,
-        image_url: imageUrl,
+        image_url: currentImageUrl,
         updated_at: new Date().toISOString()
       };
 
@@ -337,10 +316,26 @@ export const PortfolioManager: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-slate-400 mb-1.5">Project Image (Optional)</label>
+                <label className="block text-xs font-mono text-slate-400 mb-1.5">Project Image URL (Optional)</label>
+                <div className="flex items-center gap-2 mt-1">
+                  <input
+                    readOnly
+                    type="url"
+                    value={currentImageUrl}
+                    className="flex-1 bg-surface-100 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white opacity-60"
+                    placeholder="Select from Media Library..."
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setIsMediaModalOpen(true)}
+                    className="px-4 py-2.5 bg-surface-200 hover:bg-surface-100 text-white rounded-xl border border-slate-700 transition-colors whitespace-nowrap text-sm"
+                  >
+                    Choose Image
+                  </button>
+                </div>
                 
-                {currentImageUrl && !imageFile && (
-                  <div className="mb-3 relative inline-block">
+                {currentImageUrl && (
+                  <div className="mt-3 relative inline-block">
                     <img src={currentImageUrl} alt="Current" className="w-32 h-20 object-cover rounded-lg border border-slate-700" />
                     <button 
                       type="button" 
@@ -351,25 +346,6 @@ export const PortfolioManager: React.FC = () => {
                     </button>
                   </div>
                 )}
-
-                <div className="relative">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={e => setImageFile(e.target.files?.[0] || null)}
-                    className="hidden"
-                    id="image-upload"
-                  />
-                  <label
-                    htmlFor="image-upload"
-                    className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-700 rounded-xl bg-surface-100 hover:bg-surface-200 transition-colors cursor-pointer"
-                  >
-                    <UploadCloud className="w-6 h-6 text-slate-400 mb-2" />
-                    <span className="text-sm text-slate-300">
-                      {imageFile ? imageFile.name : 'Click to upload image'}
-                    </span>
-                  </label>
-                </div>
               </div>
 
               <div className="pt-4 flex justify-end gap-3 border-t border-slate-800">
@@ -389,6 +365,25 @@ export const PortfolioManager: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      
+      {isMediaModalOpen && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-surface-300 w-full max-w-5xl rounded-3xl border border-slate-700 overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-800 flex justify-between items-center bg-surface-200">
+              <h3 className="text-xl font-bold text-white">Select Project Image</h3>
+              <button type="button" onClick={() => setIsMediaModalOpen(false)} className="text-slate-400 hover:text-white p-2">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto">
+              <MediaLibrary onSelect={(url) => {
+                setCurrentImageUrl(url);
+                setIsMediaModalOpen(false);
+              }} />
+            </div>
           </div>
         </div>
       )}

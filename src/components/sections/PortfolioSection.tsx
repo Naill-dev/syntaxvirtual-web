@@ -90,8 +90,8 @@ export const PortfolioSection: React.FC = () => {
                         loading="lazy"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <Briefcase className="w-12 h-12 text-slate-700" />
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-500/20 to-purple-500/20">
+                        <span className="text-4xl font-bold text-slate-500">🚀</span>
                       </div>
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0A0F2C] via-transparent to-transparent opacity-80" />

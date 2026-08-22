@@ -10,20 +10,34 @@ export const NotificationBell = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchNotifications();
+    let channel: any;
+    
+    const setupRealtime = async () => {
+      await fetchNotifications();
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData?.user) return;
 
-    const channel = supabase.channel('schema-db-changes')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'notifications' },
-        (payload) => {
-          setNotifications(prev => [payload.new, ...prev].slice(0, 5));
-        }
-      )
-      .subscribe();
+      channel = supabase
+        .channel('notification-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'notifications',
+            filter: `user_id=eq.${userData.user.id}`
+          },
+          () => {
+            fetchNotifications(); // Refresh on new notification
+          }
+        )
+        .subscribe();
+    };
+
+    setupRealtime();
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) supabase.removeChannel(channel);
     };
   }, []);
 
