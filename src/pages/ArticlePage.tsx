@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { supabase } from '../lib/supabaseClient';
 import { Navbar } from '../components/layout/Navbar';
@@ -10,6 +10,7 @@ import { ArticleItem } from '../types';
 
 export const ArticlePage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
   const [article, setArticle] = useState<ArticleItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
@@ -74,13 +75,13 @@ export const ArticlePage: React.FC = () => {
       <Navbar onOpenBooking={() => setIsBookingOpen(true)} />
 
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 py-24 sm:py-32">
-        <Link 
-          to="/#blog"
+        <button 
+          onClick={() => navigate('/')}
           className="inline-flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors mb-10"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Insights
-        </Link>
+        </button>
 
         <article>
           {/* Cover Image */}
