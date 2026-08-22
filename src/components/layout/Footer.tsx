@@ -5,6 +5,18 @@ import { FaLinkedin, FaInstagram, FaGithub, FaDiscord } from 'react-icons/fa';
 export const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [siteSettings, setSiteSettings] = useState<{ logo_url?: string; site_name?: string } | null>(null);
+
+  useEffect(() => {
+    import('../../lib/supabaseClient').then(({ supabase }) => {
+      supabase
+        .from('site_settings')
+        .select('logo_url, site_name')
+        .eq('id', 'global')
+        .single()
+        .then(({ data }) => setSiteSettings(data || null));
+    });
+  }, []);
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,33 +39,41 @@ export const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8 mb-16">
           <div className="lg:col-span-2 space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-accent-purple to-electric-DEFAULT p-0.5 shadow-glow-sm">
-                <div className="w-full h-full bg-[#0A0F2C] rounded-[10px] flex items-center justify-center">
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="w-5 h-5 text-accent-lavender"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <polygon points="12 2 2 7 12 12 22 7 12 2" />
-                    <polyline points="2 17 12 22 22 17" />
-                    <polyline points="2 12 12 17 22 12" />
-                  </svg>
+            {siteSettings?.logo_url ? (
+              <img
+                src={siteSettings.logo_url}
+                alt={siteSettings.site_name || "SyntaxVirtual Logo"}
+                className="h-[85px] sm:h-[105px] w-auto object-contain drop-shadow-[0_0_8px_rgba(124,58,237,0.3)]"
+              />
+            ) : (
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-accent-purple to-electric-DEFAULT p-0.5 shadow-glow-sm">
+                  <div className="w-full h-full bg-[#0A0F2C] rounded-[10px] flex items-center justify-center">
+                    <svg
+                      viewBox="0 0 24 24"
+                      className="w-5 h-5 text-accent-lavender"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <polygon points="12 2 2 7 12 12 22 7 12 2" />
+                      <polyline points="2 17 12 22 22 17" />
+                      <polyline points="2 12 12 17 22 12" />
+                    </svg>
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold text-xl tracking-tight text-white">
+                    Syntax<span className="text-accent-violet">Virtual</span>
+                  </span>
+                  <span className="text-xs font-mono uppercase tracking-widest text-slate-400">
+                    Crafting Digital Excellence
+                  </span>
                 </div>
               </div>
-              <div className="flex flex-col">
-                <span className="font-bold text-xl tracking-tight text-white">
-                  Syntax<span className="text-accent-violet">Virtual</span>
-                </span>
-                <span className="text-xs font-mono uppercase tracking-widest text-slate-400">
-                  Crafting Digital Excellence
-                </span>
-              </div>
-            </div>
+            )}
 
             <p className="text-sm text-slate-400 leading-relaxed max-w-sm">
               Official web development and digital solutions studio founded by{' '}

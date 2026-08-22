@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabaseClient';
 import { Navbar } from '../components/layout/Navbar';
 import { Footer } from '../components/layout/Footer';
 import { ArticleComments } from '../components/modals/ArticleComments';
+import { ScrollReveal } from '../components/visual/ScrollReveal';
 import { Clock, Calendar, ArrowLeft } from 'lucide-react';
 import { ArticleItem } from '../types';
 
@@ -75,13 +76,14 @@ export const ArticlePage: React.FC = () => {
       <Navbar onOpenBooking={() => setIsBookingOpen(true)} />
 
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 py-24 sm:py-32">
-        <button 
-          onClick={() => navigate('/')}
-          className="inline-flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors mb-10"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Home
-        </button>
+        <ScrollReveal animation="fade" duration={0.6}>
+          <button 
+            onClick={() => navigate('/')}
+            className="inline-flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors mb-10"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Home
+          </button>
 
         <article>
           {/* Cover Image */}
@@ -171,6 +173,7 @@ export const ArticlePage: React.FC = () => {
         <div className="mt-16 pt-10 border-t border-slate-800">
           <ArticleComments articleId={article.id} />
         </div>
+        </ScrollReveal>
       </main>
 
       <Footer />

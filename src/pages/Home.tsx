@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabaseClient';
 import { Navbar } from '../components/layout/Navbar';
 import { Footer } from '../components/layout/Footer';
 import { ParticleBackground } from '../components/visual/ParticleBackground';
+import { ScrollReveal } from '../components/visual/ScrollReveal';
 import { HeroSection } from '../components/sections/HeroSection';
 import { TechMarquee } from '../components/sections/TechMarquee';
 import { ServicesSection } from '../components/sections/ServicesSection';
@@ -61,27 +62,59 @@ export function Home() {
       <ParticleBackground />
       <Navbar onOpenBooking={() => setIsBookingOpen(true)} />
       
-      <main className="flex-1 relative z-10">
+      <main className="flex-1 relative z-10 overflow-hidden">
         {/* Render dynamic sections first */}
-        {sections.filter(s => s.is_enabled).map(s => renderSection(s.section_key))}
+        {sections.filter(s => s.is_enabled).map(s => (
+          <ScrollReveal key={s.id} animation="fade" duration={0.6}>
+            {renderSection(s.section_key)}
+          </ScrollReveal>
+        ))}
 
-        {/* Fallback/static sections that are not in the builder yet, or place them manually */}
+        {/* Fallback/static sections */}
         {sections.length === 0 && (
-          <HeroSection onOpenBooking={() => setIsBookingOpen(true)} />
+          <ScrollReveal animation="fade" duration={0.6}>
+            <HeroSection onOpenBooking={() => setIsBookingOpen(true)} />
+          </ScrollReveal>
         )}
-        <TechMarquee />
-        <ServicesSection 
-          onSelectService={() => setIsBookingOpen(true)}
-          onOpenBooking={() => setIsBookingOpen(true)}
-        />
-        {sections.length === 0 && <PortfolioSection />}
-        <ProjectEstimator onApplyEstimate={handleApplyEstimate} />
-        <AboutSection />
-        <ProcessSection />
-        {sections.length === 0 && <BlogSection onSelectArticle={setSelectedArticle} />}
-        {sections.length === 0 && <TestimonialsSection />}
-        <FaqSection />
-        <ContactSection onOpenBooking={() => setIsBookingOpen(true)} />
+        <ScrollReveal animation="slideUp" duration={0.6}>
+          <TechMarquee />
+        </ScrollReveal>
+        <ScrollReveal animation="slideUp" duration={0.6}>
+          <ServicesSection 
+            onSelectService={() => setIsBookingOpen(true)}
+            onOpenBooking={() => setIsBookingOpen(true)}
+          />
+        </ScrollReveal>
+        {sections.length === 0 && (
+          <ScrollReveal animation="slideUp" duration={0.6}>
+            <PortfolioSection />
+          </ScrollReveal>
+        )}
+        <ScrollReveal animation="slideUp" duration={0.6}>
+          <ProjectEstimator onApplyEstimate={handleApplyEstimate} />
+        </ScrollReveal>
+        <ScrollReveal animation="slideUp" duration={0.6}>
+          <AboutSection />
+        </ScrollReveal>
+        <ScrollReveal animation="slideUp" duration={0.6}>
+          <ProcessSection />
+        </ScrollReveal>
+        {sections.length === 0 && (
+          <ScrollReveal animation="slideUp" duration={0.6}>
+            <BlogSection onSelectArticle={setSelectedArticle} />
+          </ScrollReveal>
+        )}
+        {sections.length === 0 && (
+          <ScrollReveal animation="slideUp" duration={0.6}>
+            <TestimonialsSection />
+          </ScrollReveal>
+        )}
+        <ScrollReveal animation="slideUp" duration={0.6}>
+          <FaqSection />
+        </ScrollReveal>
+        <ScrollReveal animation="slideUp" duration={0.6}>
+          <ContactSection onOpenBooking={() => setIsBookingOpen(true)} />
+        </ScrollReveal>
       </main>
 
       <Footer />

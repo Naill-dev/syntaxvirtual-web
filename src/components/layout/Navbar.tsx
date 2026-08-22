@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, ArrowUpRight, Sparkles, PhoneCall } from 'lucide-react';
+import { supabase } from '../../lib/supabaseClient';
 import logoImage from '../../assets/logo.png';
 
 interface NavbarProps {
@@ -10,6 +11,16 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
+  const [siteSettings, setSiteSettings] = useState<{ logo_url?: string; site_name?: string } | null>(null);
+
+  useEffect(() => {
+    supabase
+      .from('site_settings')
+      .select('logo_url, site_name')
+      .eq('id', 'global')
+      .single()
+      .then(({ data }) => setSiteSettings(data || null));
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -56,9 +67,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         <a href="/" className="flex items-center group focus:outline-none">
           <img
-            src={logoImage}
-            alt="SyntaxVirtual Logo"
-            className="h-[85px] sm:h-[105px] md:h-[120px] w-auto object-contain flex-shrink-0 group-hover:scale-105 transition-transform duration-300"
+            src={siteSettings?.logo_url || logoImage}
+            alt={siteSettings?.site_name || "SyntaxVirtual Logo"}
+            className="h-[85px] sm:h-[105px] md:h-[120px] w-auto object-contain flex-shrink-0 group-hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_8px_rgba(124,58,237,0.3)]"
           />
         </a>
 
