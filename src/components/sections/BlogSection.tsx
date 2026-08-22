@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArticleItem } from '../../types';
-import { ArrowRight, BookOpen, Clock, Tag } from 'lucide-react';
+import { ArrowRight, BookOpen, Clock, Tag, Plus } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
 
 interface BlogSectionProps {
@@ -11,6 +11,7 @@ interface BlogSectionProps {
 export const BlogSection: React.FC<BlogSectionProps> = ({ onSelectArticle }) => {
   const [articles, setArticles] = useState<ArticleItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(6);
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -67,7 +68,7 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ onSelectArticle }) => 
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {articles.map((article) => (
+            {articles.slice(0, visibleCount).map((article) => (
               <Link
                 key={article.id}
                 to={`/blog/${article.slug}`}
@@ -104,6 +105,18 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ onSelectArticle }) => 
                 </div>
               </Link>
             ))}
+          </div>
+        )}
+
+        {!loading && articles.length > visibleCount && (
+          <div className="flex justify-center mt-12">
+            <button
+              onClick={() => setVisibleCount(prev => prev + 6)}
+              className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-surface-200/50 hover:bg-surface-200 border border-slate-700/50 hover:border-slate-600 text-white rounded-full font-bold text-sm uppercase tracking-wide transition-all backdrop-blur-sm"
+            >
+              <Plus className="w-4 h-4" />
+              Daha çox
+            </button>
           </div>
         )}
       </div>

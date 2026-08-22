@@ -1,6 +1,5 @@
 import React from 'react';
 import { ArrowRight, Sparkles, Code2, Zap, ShieldCheck, Star, Play, Terminal } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { CodeTerminal } from '../visual/CodeTerminal';
 
 interface HeroSectionProps {
@@ -21,12 +20,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenBooking }) => {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           {/* Left Column: Copy & Actions */}
-          <motion.div 
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="lg:col-span-7 space-y-8 text-center lg:text-left"
-          >
+          <div className="lg:col-span-7 space-y-8 text-center lg:text-left">
             {/* Pill Badge */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-200/80 border border-teal-500/30 backdrop-blur-md shadow-glow-sm">
               <span className="flex h-2 w-2 relative">
@@ -108,17 +102,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenBooking }) => {
                 <div className="text-xs text-slate-400 font-sans">Optimized</div>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Right Column: Code Terminal / Architecture Showcase */}
-          <motion.div 
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-            className="lg:col-span-5 flex justify-center lg:justify-end"
-          >
+          <div className="lg:col-span-5 flex justify-center lg:justify-end">
             <CodeTerminal />
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

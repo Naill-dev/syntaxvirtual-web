@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { PortfolioProject } from '../../types';
 import { GlowingCard } from '../visual/GlowingCard';
-import { ArrowUpRight, Sparkles, Layers, CheckCircle2, Eye, Briefcase } from 'lucide-react';
+import { ArrowUpRight, Sparkles, Layers, CheckCircle2, Eye, Briefcase, Plus } from 'lucide-react';
 
 export const PortfolioSection: React.FC = () => {
   const [projects, setProjects] = useState<PortfolioProject[]>([]);
   const [loading, setLoading] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(6);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -74,7 +75,7 @@ export const PortfolioSection: React.FC = () => {
         {/* Project Grid */}
         {!loading && projects.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.map((project) => (
+            {projects.slice(0, visibleCount).map((project) => (
               <div
                 key={project.id}
                 className="group relative rounded-2xl border border-slate-800 bg-surface-300/80 overflow-hidden backdrop-blur-xl hover:border-accent-purple/50 transition-all duration-300 flex flex-col justify-between hover:shadow-glow-md hover:-translate-y-1.5"
@@ -150,6 +151,18 @@ export const PortfolioSection: React.FC = () => {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {!loading && projects.length > visibleCount && (
+          <div className="flex justify-center mt-12">
+            <button
+              onClick={() => setVisibleCount(prev => prev + 6)}
+              className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-surface-200/50 hover:bg-surface-200 border border-slate-700/50 hover:border-slate-600 text-white rounded-full font-bold text-sm uppercase tracking-wide transition-all backdrop-blur-sm"
+            >
+              <Plus className="w-4 h-4" />
+              Daha çox
+            </button>
           </div>
         )}
       </div>
