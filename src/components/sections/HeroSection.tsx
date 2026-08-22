@@ -86,20 +86,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenBooking }) => {
             {/* Key Micro-Trust Indicators */}
             <div className="pt-6 border-t border-slate-800/60 grid grid-cols-2 sm:grid-cols-4 gap-4 text-left">
               <div>
-                <div className="text-2xl font-bold font-mono text-white">CI/CD</div>
-                <div className="text-xs text-slate-400 font-sans">Automated Pipelines</div>
+                <div className="text-2xl font-bold font-mono text-white">Modern</div>
+                <div className="text-xs text-slate-400 font-sans">Tech Stack</div>
               </div>
               <div>
-                <div className="text-2xl font-bold font-mono text-cyan-400">SOC-2</div>
-                <div className="text-xs text-slate-400 font-sans">Security Ready</div>
+                <div className="text-2xl font-bold font-mono text-cyan-400">Secure</div>
+                <div className="text-xs text-slate-400 font-sans">Architecture</div>
               </div>
               <div>
-                <div className="text-2xl font-bold font-mono text-indigo-400">React</div>
-                <div className="text-xs text-slate-400 font-sans">Modern Tooling</div>
+                <div className="text-2xl font-bold font-mono text-indigo-400">Responsive</div>
+                <div className="text-xs text-slate-400 font-sans">UI/UX Design</div>
               </div>
               <div>
-                <div className="text-2xl font-bold font-mono text-emerald-400">100%</div>
-                <div className="text-xs text-slate-400 font-sans">Bespoke Architecture</div>
+                <div className="text-2xl font-bold font-mono text-emerald-400">SEO</div>
+                <div className="text-xs text-slate-400 font-sans">Optimized</div>
               </div>
             </div>
           </div>

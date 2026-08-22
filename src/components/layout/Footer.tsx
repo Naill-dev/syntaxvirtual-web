@@ -5,25 +5,6 @@ import { FaLinkedin, FaInstagram, FaGithub, FaDiscord } from 'react-icons/fa';
 export const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
-  const [time, setTime] = useState('');
-
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setTime(
-        now.toLocaleTimeString('en-US', {
-          timeZone: 'UTC',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false,
-        }) + ' UTC'
-      );
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,9 +64,6 @@ export const Footer: React.FC = () => {
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 <span>All Systems 100% Operational</span>
-              </div>
-              <div className="px-3 py-1.5 rounded-full bg-surface-100/60 border border-slate-800 text-slate-300">
-                <span>⏱ {time}</span>
               </div>
             </div>
           </div>
