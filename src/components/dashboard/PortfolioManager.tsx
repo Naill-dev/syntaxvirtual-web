@@ -138,9 +138,9 @@ export const PortfolioManager: React.FC = () => {
 
       closeModal();
       fetchProjects();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      toast.error(editingProject ? 'Failed to update project' : 'Failed to add project');
+      toast.error(err.message || (editingProject ? 'Failed to update project' : 'Failed to add project'));
     } finally {
       setIsSubmitting(false);
     }
