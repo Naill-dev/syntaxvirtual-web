@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
-import { LogOut, LayoutDashboard, MessageSquare, BookOpen, Inbox, Menu, X, Briefcase } from 'lucide-react';
+import { LogOut, LayoutDashboard, MessageSquare, BookOpen, Inbox, Menu, X, Briefcase, Activity, Settings, Users, Shield, Type, Globe, Image as ImageIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 import { DashboardLogin } from '../components/dashboard/DashboardLogin';
@@ -10,12 +10,21 @@ import { ArticleManager } from '../components/dashboard/ArticleManager';
 import { ContactManager } from '../components/dashboard/ContactManager';
 import { CommentManager } from '../components/dashboard/CommentManager';
 import { PortfolioManager } from '../components/dashboard/PortfolioManager';
+import { AnalyticsDashboard } from '../components/dashboard/AnalyticsDashboard';
+import { RoleManager } from '../components/dashboard/RoleManager';
+import { CareersManager } from '../components/dashboard/CareersManager';
+import { ContentManager } from '../components/dashboard/ContentManager';
+import { SeoManager } from '../components/dashboard/SeoManager';
+import { MediaLibrary } from '../components/dashboard/MediaLibrary';
+import { ActivityLogs } from '../components/dashboard/ActivityLogs';
+import { SecurityDashboard } from '../components/dashboard/SecurityDashboard';
+import { SettingsManager } from '../components/dashboard/SettingsManager';
+import { NotificationBell } from '../components/ui/NotificationBell';
 
 export function Dashboard() {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [pendingComments, setPendingComments] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -23,58 +32,36 @@ export function Dashboard() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
-      if (session) fetchPendingComments();
     });
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-      if (session) fetchPendingComments();
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  const fetchPendingComments = async () => {
-    const { count } = await supabase
-      .from('article_comments')
-      .select('*', { count: 'exact', head: true })
-      .eq('is_approved', false);
-    setPendingComments(count || 0);
-  };
-
-  // Session timeout logic (30 minutes)
   useEffect(() => {
     if (!session) return;
-
     let timeoutId: ReturnType<typeof setTimeout>;
-    
     const resetTimeout = () => {
       clearTimeout(timeoutId);
-      // 30 minutes in milliseconds
       timeoutId = setTimeout(async () => {
         await supabase.auth.signOut();
         toast.error('Session expired. Please login again.');
         navigate('/dashboard');
       }, 30 * 60 * 1000);
     };
-
     const events = ['mousemove', 'keypress', 'scroll', 'click'];
     events.forEach(e => window.addEventListener(e, resetTimeout));
-    
     resetTimeout();
-
     return () => {
       clearTimeout(timeoutId);
       events.forEach(e => window.removeEventListener(e, resetTimeout));
     };
   }, [session, navigate]);
 
-  // Close sidebar on mobile when navigating
-  useEffect(() => {
-    setIsSidebarOpen(false);
-  }, [location.pathname]);
+  useEffect(() => { setIsSidebarOpen(false); }, [location.pathname]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -84,10 +71,7 @@ export function Dashboard() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#060919] flex items-center justify-center">
-        <svg className="animate-spin h-10 w-10 text-accent-purple" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
+        <svg className="animate-spin h-10 w-10 text-accent-purple" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
       </div>
     );
   }
@@ -97,110 +81,87 @@ export function Dashboard() {
   }
 
   const navItems = [
-    { name: 'Overview', path: '/dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
-    { name: 'Reviews', path: '/dashboard/reviews', icon: <MessageSquare className="w-4 h-4" /> },
-    { name: 'Articles', path: '/dashboard/articles', icon: <BookOpen className="w-4 h-4" /> },
-    { 
-      name: 'Comments', 
-      path: '/dashboard/comments', 
-      icon: <MessageSquare className="w-4 h-4" />,
-      badge: pendingComments > 0 ? pendingComments : undefined 
-    },
-    { name: 'Inquiries', path: '/dashboard/inquiries', icon: <Inbox className="w-4 h-4" /> },
-    { name: 'Portfolio', path: '/dashboard/portfolio', icon: <Briefcase className="w-4 h-4" /> },
+    { path: '/dashboard/analytics', label: 'Analytics', icon: LayoutDashboard },
+    { path: '/dashboard/projects', label: 'Projects', icon: Briefcase },
+    { path: '/dashboard/reviews', label: 'Reviews', icon: MessageSquare },
+    { path: '/dashboard/articles', label: 'Articles', icon: BookOpen },
+    { path: '/dashboard/comments', label: 'Comments', icon: MessageSquare },
+    { path: '/dashboard/careers', label: 'Careers', icon: Briefcase },
+    { path: '/dashboard/inquiries', label: 'Inquiries', icon: Inbox },
+    { path: '/dashboard/content', label: 'Content', icon: Type },
+    { path: '/dashboard/seo', label: 'SEO', icon: Globe },
+    { path: '/dashboard/media', label: 'Media Library', icon: ImageIcon },
+    { path: '/dashboard/activity', label: 'Activity Logs', icon: Activity },
+    { path: '/dashboard/security', label: 'Security', icon: Shield },
+    { path: '/dashboard/users', label: 'Users (Admin)', icon: Users },
+    { path: '/dashboard/settings', label: 'Settings', icon: Settings },
   ];
 
   return (
-    <div className="min-h-screen bg-[#060919] text-slate-300 font-sans flex flex-col md:flex-row relative">
-      
-      {/* Mobile Sidebar Overlay */}
+    <div className="min-h-screen bg-[#060919] flex">
       {isSidebarOpen && (
-        <div 
-          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden"
-          onClick={() => setIsSidebarOpen(false)}
-        />
+        <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setIsSidebarOpen(false)} />
       )}
-
-      {/* Sidebar */}
-      <aside className={`fixed md:static inset-y-0 left-0 z-50 w-64 bg-surface-300 border-r border-slate-800 flex flex-col shrink-0 transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
-        <div className="h-16 flex items-center justify-between px-6 border-b border-slate-800">
-          <Link to="/" className="text-white font-bold text-lg flex items-center gap-2 hover:text-accent-light transition-colors">
-            <span className="w-2 h-2 rounded-full bg-accent-purple" />
-            Syntax Admin
+      
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-surface-300 border-r border-slate-800 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:block ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="p-6 flex justify-between items-center">
+          <Link to="/" className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-accent-purple to-accent-lavender">
+            SyntaxVirtual
           </Link>
-          <button 
-            className="md:hidden text-slate-400 hover:text-white" 
-            onClick={() => setIsSidebarOpen(false)}
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <button className="lg:hidden text-slate-400 hover:text-white" onClick={() => setIsSidebarOpen(false)}><X className="w-6 h-6" /></button>
         </div>
-        
-        <div className="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
+        <nav className="px-4 py-2 space-y-1 h-[calc(100vh-160px)] overflow-y-auto">
           {navItems.map((item) => (
-            <Link
-              key={item.name}
-              to={item.path}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                location.pathname === item.path
-                  ? 'bg-accent-purple text-white shadow-glow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-surface-200'
-              }`}
-            >
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center gap-3">
-                  {item.icon}
-                  {item.name}
-                </div>
-                {item.badge && (
-                  <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                    {item.badge}
-                  </span>
-                )}
-              </div>
+            <Link key={item.path} to={item.path} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${location.pathname === item.path ? 'bg-accent-purple text-white shadow-glow-sm' : 'text-slate-400 hover:bg-surface-200 hover:text-white'}`}>
+              <item.icon className="w-5 h-5" />
+              <span className="font-medium text-sm">{item.label}</span>
             </Link>
           ))}
-        </div>
-
-        <div className="p-4 border-t border-slate-800">
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-surface-200 transition-colors"
-          >
-            <LogOut className="w-4 h-4" />
-            Sign Out
+        </nav>
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-800 bg-surface-300">
+          <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-red-400 hover:bg-red-500/10 transition-colors">
+            <LogOut className="w-5 h-5" />
+            <span className="font-medium text-sm">Sign Out</span>
           </button>
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 h-screen overflow-y-auto bg-[#0A0F2C] min-w-0">
+      <main className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+        <header className="h-20 border-b border-slate-800 bg-surface-300/50 backdrop-blur-md flex items-center justify-between px-4 sm:px-8 shrink-0">
+          <div className="flex items-center gap-4">
+            <button className="lg:hidden text-slate-400 hover:text-white p-2" onClick={() => setIsSidebarOpen(true)}>
+              <Menu className="w-6 h-6" />
+            </button>
+            <h2 className="text-lg font-semibold text-white hidden sm:block">Dashboard Overview</h2>
+          </div>
+          <div className="flex items-center gap-4">
+            <NotificationBell />
+            <div className="h-8 w-8 rounded-full bg-accent-purple/20 flex items-center justify-center border border-accent-purple/30">
+              <span className="text-sm font-medium text-accent-purple">{session.user?.email?.[0].toUpperCase()}</span>
+            </div>
+          </div>
+        </header>
         
-        {/* Mobile Header */}
-        <div className="md:hidden h-16 flex items-center px-4 border-b border-slate-800 bg-surface-300 sticky top-0 z-30">
-          <button 
-            onClick={() => setIsSidebarOpen(true)}
-            className="p-2 -ml-2 rounded-lg text-slate-400 hover:text-white hover:bg-surface-200 transition-colors"
-          >
-            <Menu className="w-6 h-6" />
-          </button>
-          <span className="ml-3 font-bold text-white">Syntax Admin</span>
-        </div>
-
-        <div className="p-4 sm:p-8 max-w-6xl mx-auto">
-          <Routes>
-            <Route path="/" element={
-              <div className="space-y-6">
-                <h1 className="text-2xl sm:text-3xl font-bold text-white">Dashboard Overview</h1>
-                <p className="text-slate-400 text-sm sm:text-base">Welcome to your secure command center. Use the sidebar to manage content.</p>
-              </div>
-            } />
-            <Route path="/reviews" element={<ReviewManager />} />
-            <Route path="/articles" element={<ArticleManager />} />
-            <Route path="/comments" element={<CommentManager />} />
-            <Route path="/inquiries" element={<ContactManager />} />
-            <Route path="/portfolio" element={<PortfolioManager />} />
-          </Routes>
+        <div className="flex-1 overflow-auto p-4 sm:p-8">
+          <div className="max-w-6xl mx-auto">
+            <Routes>
+              <Route path="/" element={<AnalyticsDashboard />} />
+              <Route path="/analytics" element={<AnalyticsDashboard />} />
+              <Route path="/projects" element={<PortfolioManager />} />
+              <Route path="/reviews" element={<ReviewManager />} />
+              <Route path="/articles" element={<ArticleManager />} />
+              <Route path="/comments" element={<CommentManager />} />
+              <Route path="/inquiries" element={<ContactManager />} />
+              <Route path="/careers" element={<CareersManager />} />
+              <Route path="/content" element={<ContentManager />} />
+              <Route path="/seo" element={<SeoManager />} />
+              <Route path="/media" element={<MediaLibrary />} />
+              <Route path="/activity" element={<ActivityLogs />} />
+              <Route path="/security" element={<SecurityDashboard />} />
+              <Route path="/users" element={<RoleManager />} />
+              <Route path="/settings" element={<SettingsManager />} />
+            </Routes>
+          </div>
         </div>
       </main>
     </div>

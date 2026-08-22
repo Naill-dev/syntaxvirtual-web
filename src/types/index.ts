@@ -126,3 +126,14 @@ export interface EstimatorInquiry {
   budget_range: string;
   created_at: string;
 }
+
+export interface PageView { id: string; page_path: string; visitor_ip?: string; user_agent?: string; created_at: string; }
+export interface UserRole { user_id: string; role: 'super_admin' | 'admin' | 'editor'; }
+export interface Career { id: string; title: string; department: string; location: string; employment_type: string; description: string; requirements: string[]; salary_range?: string; is_active: boolean; created_at: string; updated_at: string; }
+export interface CareerApplication { id: string; career_id: string; full_name: string; email: string; phone?: string; cover_letter?: string; resume_url?: string; status: 'pending'|'reviewed'|'interviewed'|'accepted'|'rejected'; created_at: string; }
+export interface SiteContent { id: string; section: string; key: string; value: string; updated_at: string; }
+export interface SeoSetting { id: string; page_path: string; meta_title?: string; meta_description?: string; meta_keywords?: string; og_image_url?: string; updated_at: string; }
+export interface ActivityLog { id: string; user_id?: string; user_email?: string; action: string; entity_type?: string; entity_id?: string; details?: any; created_at: string; }
+export interface ThemeSetting { id: string; theme_name: string; primary_color: string; secondary_color: string; accent_color: string; is_active: boolean; created_at: string; }
+export interface HomepageSection { id: string; section_key: string; is_enabled: boolean; display_order: number; }
+export interface Notification { id: string; user_id?: string; type: string; message: string; link?: string; is_read: boolean; created_at: string; }
