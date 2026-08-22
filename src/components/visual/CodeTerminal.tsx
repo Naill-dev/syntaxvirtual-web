@@ -10,94 +10,52 @@ interface CodeSnippet {
 }
 
 export const CodeTerminal: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>('app');
+  const [activeTab, setActiveTab] = useState<string>('init');
   const [copied, setCopied] = useState(false);
 
   const snippets: Record<string, CodeSnippet> = {
-    app: {
-      id: 'app',
-      filename: 'SyntaxEngine.tsx',
-      language: 'typescript',
-      code: `// SyntaxVirtual Core Platform Architecture
-import { EdgeRouter, RealTimeMesh } from '@syntaxvirtual/core';
-
-export default async function Page() {
-  const mesh = await RealTimeMesh.connect({
-    region: 'global-edge',
-    encryption: 'quantum-resistant',
-    caching: 'stale-while-revalidate'
-  });
-
-  return (
-    <SyntaxExperience
-      quality="flawless"
-      fps={120}
-      ttfb="< 25ms"
-      lighthouseScore={100}
-    >
-      <HeroHeadline text="Crafting Digital Excellence" />
-      <ArchitectureView telemetry={mesh.telemetry} />
-    </SyntaxExperience>
-  );
-}`,
+    init: {
+      id: 'init',
+      filename: 'init.log',
+      language: 'shell',
+      code: `[info] initializing React runtime (v18.2.0)
+[network] connecting to Supabase edge network...
+[network] connection established (ping: 24ms)
+[build] compiling Tailwind CSS JIT...
+[build] optimized 342 modules in 1.4s
+[info] mounting syntax-virtual core framework
+[auth] verifying RBAC security headers
+[system] ready - listening on port 3000`,
       metrics: [
-        { label: 'Edge TTFB', value: '18ms', color: 'text-emerald-400' },
-        { label: 'Lighthouse', value: '100/100', color: 'text-accent-lavender' },
-        { label: 'Build Status', value: 'Optimal', color: 'text-electric-light' }
+        { label: 'Runtime', value: 'Node 20.x', color: 'text-emerald-400' },
+        { label: 'Env', value: 'Production', color: 'text-accent-lavender' }
       ]
     },
-    performance: {
-      id: 'performance',
-      filename: 'PerformanceAudit.ts',
+    security: {
+      id: 'security',
+      filename: 'middleware.ts',
       language: 'typescript',
-      code: `// Core Web Vitals Real-Time Benchmark
-export const auditBenchmarks = {
-  largestContentfulPaint: '0.64s', // Target < 2.5s (Grade: A+)
-  interactionToNextPaint: '22ms',  // Target < 200ms (Grade: A+)
-  cumulativeLayoutShift:  '0.000', // Target < 0.1 (Grade: A+)
-  timeToFirstByte:        '18ms',  // Global Edge Average
-  compressionRatio:       '88.4%', // Brotli 11 Max Stream
-  bundleSizeTotal:        '42.1kB' // Zero runtime bloat
-};
+      code: `import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-export function assertZeroJank() {
-  return auditBenchmarks.interactionToNextPaint < '50ms';
+export function middleware(request: NextRequest) {
+  const response = NextResponse.next();
+  
+  // Enforce Strict Security Headers
+  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('Referrer-Policy', 'strict-origin');
+  
+  return response;
 }`,
       metrics: [
-        { label: 'INP', value: '22ms', color: 'text-emerald-400' },
-        { label: 'LCP', value: '0.64s', color: 'text-emerald-400' },
-        { label: 'CLS', value: '0.000', color: 'text-emerald-400' }
-      ]
-    },
-    architecture: {
-      id: 'architecture',
-      filename: 'StackConfig.json',
-      language: 'json',
-      code: `{
-  "brand": "SyntaxVirtual",
-  "architect": "Nail Mammadov",
-  "frontend": {
-    "framework": "Next.js 14 / React 18",
-    "language": "TypeScript Strict",
-    "styling": "Tailwind CSS + Glassmorphism",
-    "motion": "Hardware-Accelerated WebGL/CSS"
-  },
-  "backend": {
-    "api": "FastAPI + Node.js Microservices",
-    "cache": "Redis In-Memory Tier",
-    "database": "PostgreSQL Distributed Cluster",
-    "security": "HIPAA / SOC-2 Ready RBAC"
-  }
-}`,
-      metrics: [
-        { label: 'Type Safety', value: 'Strict 100%', color: 'text-blue-400' },
-        { label: 'Security', value: 'Enterprise', color: 'text-purple-400' },
-        { label: 'Uptime SLA', value: '99.99%', color: 'text-emerald-400' }
+        { label: 'CSP', value: 'Strict', color: 'text-emerald-400' },
+        { label: 'HSTS', value: 'Enabled', color: 'text-emerald-400' }
       ]
     }
   };
 
-  const currentSnippet = snippets[activeTab] || snippets.app;
+  const currentSnippet = snippets[activeTab] || snippets.init;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(currentSnippet.code);
