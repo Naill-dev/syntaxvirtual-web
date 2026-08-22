@@ -37,9 +37,9 @@ export const PortfolioManager: React.FC = () => {
 
       if (error) throw error;
       setProjects(data || []);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      toast.error('Failed to load portfolio projects');
+      toast.error(err.message || 'Failed to load portfolio projects');
     } finally {
       setLoading(false);
     }
@@ -61,7 +61,7 @@ export const PortfolioManager: React.FC = () => {
       setEditingProject(project);
       setTitle(project.title);
       setDescription(project.description || '');
-      setTechStack(project.tech_stack.join(', '));
+      setTechStack(Array.isArray(project.tech_stack) ? project.tech_stack.join(', ') : (project.tech_stack || ''));
       setGithubUrl(project.github_url);
       setLiveDemoUrl(project.live_demo_url || '');
       setCurrentImageUrl(project.image_url || '');
@@ -136,9 +136,9 @@ export const PortfolioManager: React.FC = () => {
 
       setProjects(projects.filter(p => p.id !== id));
       toast.success('Project deleted');
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      toast.error('Failed to delete project');
+      toast.error(err.message || 'Failed to delete project');
     }
   };
 

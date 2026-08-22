@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabaseClient';
 import { logAuditAction } from '../../lib/audit';
 import { ArticleComment } from '../../types';
@@ -8,6 +9,9 @@ import { CheckCircle, XCircle, Trash2, Search, MessageSquare } from 'lucide-reac
 export const CommentManager: React.FC = () => {
   const [comments, setComments] = useState<(ArticleComment & { articles?: { title: string } })[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const filter = searchParams.get('filter') || 'all';
 
   useEffect(() => {
     fetchComments();
@@ -22,9 +26,9 @@ export const CommentManager: React.FC = () => {
 
       if (error) throw error;
       setComments(data || []);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      toast.error('Failed to load comments');
+      toast.error(err.message || 'Failed to load comments');
     } finally {
       setLoading(false);
     }
@@ -44,9 +48,9 @@ export const CommentManager: React.FC = () => {
 
       setComments(comments.map(c => c.id === id ? { ...c, is_approved: !currentStatus } : c));
       toast.success(currentStatus ? 'Comment hidden' : 'Comment approved');
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      toast.error('Failed to update status');
+      toast.error(err.message || 'Failed to update status');
     }
   };
 
@@ -61,20 +65,33 @@ export const CommentManager: React.FC = () => {
 
       setComments(comments.filter(c => c.id !== id));
       toast.success('Comment deleted');
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      toast.error('Failed to delete comment');
+      toast.error(err.message || 'Failed to delete comment');
     }
   };
 
   if (loading) return <div className="text-slate-400">Loading comments...</div>;
 
+  const filteredComments = comments.filter(c => {
+    if (filter === 'pending') return !c.is_approved;
+    if (filter === 'approved') return c.is_approved;
+    return true;
+  });
+
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-        <MessageSquare className="w-6 h-6 text-accent-purple" />
-        Article Comments
-      </h1>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+          <MessageSquare className="w-6 h-6 text-accent-purple" />
+          Article Comments
+        </h1>
+        <div className="flex bg-surface-200 p-1 rounded-xl border border-slate-700 w-max">
+          <button onClick={() => setSearchParams({})} className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${filter === 'all' ? 'bg-slate-700 text-white shadow-md' : 'text-slate-400 hover:text-white'}`}>All</button>
+          <button onClick={() => setSearchParams({ filter: 'pending' })} className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${filter === 'pending' ? 'bg-slate-700 text-white shadow-md' : 'text-slate-400 hover:text-white'}`}>Pending</button>
+          <button onClick={() => setSearchParams({ filter: 'approved' })} className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${filter === 'approved' ? 'bg-slate-700 text-white shadow-md' : 'text-slate-400 hover:text-white'}`}>Approved</button>
+        </div>
+      </div>
 
       <div className="bg-surface-300 border border-slate-800 rounded-2xl overflow-x-auto">
         <table className="w-full text-left text-sm text-slate-300">
@@ -87,7 +104,10 @@ export const CommentManager: React.FC = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-800">
-            {comments.map(comment => (
+            {filteredComments.length === 0 && (
+              <tr><td colSpan={4} className="px-6 py-12 text-center text-slate-500">No {filter !== 'all' ? filter : ''} comments found</td></tr>
+            )}
+            {filteredComments.map(comment => (
               <tr key={comment.id} className="hover:bg-surface-200/50 transition-colors">
                 <td className="px-6 py-4 align-top">
                   <div className="font-bold text-white max-w-[200px] truncate" title={comment.articles?.title}>

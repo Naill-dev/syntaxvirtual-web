@@ -28,9 +28,14 @@ export const CareersManager = () => {
 
   const deleteCareer = async (id: string) => {
     if (!confirm('Are you sure?')) return;
-    await supabase.from('careers').delete().eq('id', id);
-    setCareers(careers.filter(c => c.id !== id));
-    toast.success('Deleted');
+    try {
+      const { error } = await supabase.from('careers').delete().eq('id', id);
+      if (error) throw error;
+      setCareers(careers.filter(c => c.id !== id));
+      toast.success('Deleted');
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to delete');
+    }
   };
 
   return (
@@ -101,8 +106,8 @@ const CareerModal = ({ job, onClose, onSuccess }: any) => {
         toast.success('Job added');
       }
       onSuccess();
-    } catch (err) {
-      toast.error('Failed to save job');
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to save job');
     }
     setSubmitting(false);
   };
