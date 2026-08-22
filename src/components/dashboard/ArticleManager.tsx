@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { logAuditAction } from '../../lib/audit';
-import { Trash2, Edit3, Plus } from 'lucide-react';
+import { Trash2, Edit3, Plus, X } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { MediaLibrary } from './MediaLibrary';
 
 export function ArticleManager() {
   const [articles, setArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
   const [currentArticle, setCurrentArticle] = useState<any>({});
   
   const fetchArticles = async () => {
@@ -102,7 +104,17 @@ export function ArticleManager() {
             </div>
             <div>
               <label className="text-xs font-medium text-slate-400">Cover Image URL</label>
-              <input required type="url" value={currentArticle.cover_image_url || ''} onChange={e => setCurrentArticle({...currentArticle, cover_image_url: e.target.value})} className="w-full mt-1 px-4 py-2 rounded-xl bg-surface-200 border border-slate-700 text-white" />
+              <div className="flex items-center gap-2 mt-1">
+                <input readOnly required type="url" value={currentArticle.cover_image_url || ''} className="flex-1 px-4 py-2 rounded-xl bg-surface-200 border border-slate-700 text-white opacity-60" placeholder="Select from Media Library..." />
+                <button type="button" onClick={() => setIsMediaModalOpen(true)} className="px-4 py-2 bg-surface-100 hover:bg-surface-50 text-white rounded-xl border border-slate-700 transition-colors whitespace-nowrap">
+                  Choose Image
+                </button>
+              </div>
+              {currentArticle.cover_image_url && (
+                <div className="mt-2 w-full h-32 rounded-xl border border-slate-700 overflow-hidden">
+                  <img src={currentArticle.cover_image_url} alt="Cover Preview" className="w-full h-full object-cover" />
+                </div>
+              )}
             </div>
           </div>
           <div>
@@ -116,6 +128,25 @@ export function ArticleManager() {
           
           <button type="submit" className="px-6 py-3 rounded-xl bg-accent-purple hover:bg-accent-violet text-white font-bold text-sm">Save Article</button>
         </form>
+        
+        {isMediaModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+            <div className="bg-surface-300 w-full max-w-5xl rounded-3xl border border-slate-700 overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+              <div className="p-6 border-b border-slate-800 flex justify-between items-center bg-surface-200">
+                <h3 className="text-xl font-bold text-white">Select Cover Image</h3>
+                <button type="button" onClick={() => setIsMediaModalOpen(false)} className="text-slate-400 hover:text-white p-2">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+              <div className="p-6 overflow-y-auto">
+                <MediaLibrary onSelect={(url) => {
+                  setCurrentArticle({ ...currentArticle, cover_image_url: url });
+                  setIsMediaModalOpen(false);
+                }} />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }

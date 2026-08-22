@@ -1,25 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import { Bell } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
+import { useNavigate } from 'react-router-dom';
 
 export const NotificationBell = () => {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     fetchNotifications();
+
+    const channel = supabase.channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'notifications' },
+        (payload) => {
+          setNotifications(prev => [payload.new, ...prev].slice(0, 5));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchNotifications = async () => {
-    const { data } = await supabase.from('notifications').select('*').order('created_at', { ascending: false }).limit(5);
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData.user) return;
+    const { data } = await supabase.from('notifications')
+      .select('*')
+      .eq('user_id', userData.user.id)
+      .order('created_at', { ascending: false })
+      .limit(5);
     if (data) setNotifications(data);
   };
 
   const unreadCount = notifications.filter(n => !n.is_read).length;
 
-  const markAsRead = async (id: string) => {
-    await supabase.from('notifications').update({ is_read: true }).eq('id', id);
-    fetchNotifications();
+  const handleNotificationClick = async (n: any) => {
+    setIsOpen(false);
+    if (!n.is_read) {
+      await supabase.from('notifications').update({ is_read: true }).eq('id', n.id);
+      setNotifications(notifications.map(notif => notif.id === n.id ? { ...notif, is_read: true } : notif));
+    }
+    if (n.link) {
+      navigate(n.link);
+    }
   };
 
   return (
@@ -39,7 +68,7 @@ export const NotificationBell = () => {
               <div className="p-4 text-slate-400 text-sm text-center">No notifications</div>
             ) : (
               notifications.map(n => (
-                <div key={n.id} onClick={() => markAsRead(n.id)} className={`p-4 border-b border-slate-800/50 cursor-pointer hover:bg-surface-200 transition-colors ${!n.is_read ? 'bg-surface-200/50' : ''}`}>
+                <div key={n.id} onClick={() => handleNotificationClick(n)} className={`p-4 border-b border-slate-800/50 cursor-pointer hover:bg-surface-200 transition-colors ${!n.is_read ? 'bg-surface-200/50' : ''}`}>
                   <p className="text-sm text-slate-200">{n.message}</p>
                   <p className="text-xs text-slate-500 mt-1">{new Date(n.created_at).toLocaleString()}</p>
                 </div>

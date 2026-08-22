@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabaseClient';
 import { logAuditAction } from '../../lib/audit';
 import { Trash2, CheckCircle, XCircle } from 'lucide-react';
@@ -7,6 +8,9 @@ import toast from 'react-hot-toast';
 export function ReviewManager() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  const filter = searchParams.get('filter') || 'all';
 
   const fetchReviews = async () => {
     try {
@@ -69,9 +73,22 @@ export function ReviewManager() {
 
   if (loading) return <div className="text-slate-400">Loading reviews...</div>;
 
+  const filteredReviews = reviews.filter(r => {
+    if (filter === 'pending') return !r.is_approved;
+    if (filter === 'approved') return r.is_approved;
+    return true;
+  });
+
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-white">Review Moderation</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <h1 className="text-2xl font-bold text-white">Review Moderation</h1>
+        <div className="flex bg-surface-200 p-1 rounded-xl border border-slate-700 w-max">
+          <button onClick={() => setSearchParams({})} className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${filter === 'all' ? 'bg-slate-700 text-white shadow-md' : 'text-slate-400 hover:text-white'}`}>All</button>
+          <button onClick={() => setSearchParams({ filter: 'pending' })} className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${filter === 'pending' ? 'bg-slate-700 text-white shadow-md' : 'text-slate-400 hover:text-white'}`}>Pending</button>
+          <button onClick={() => setSearchParams({ filter: 'approved' })} className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${filter === 'approved' ? 'bg-slate-700 text-white shadow-md' : 'text-slate-400 hover:text-white'}`}>Approved</button>
+        </div>
+      </div>
       
       <div className="bg-surface-300 border border-slate-800 rounded-2xl overflow-x-auto">
         <table className="w-full text-left text-sm text-slate-300">
@@ -85,7 +102,10 @@ export function ReviewManager() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-800">
-            {reviews.map(review => (
+            {filteredReviews.length === 0 && (
+              <tr><td colSpan={5} className="px-6 py-12 text-center text-slate-500">No {filter !== 'all' ? filter : ''} reviews found</td></tr>
+            )}
+            {filteredReviews.map(review => (
               <tr key={review.id} className="hover:bg-surface-200/50 transition-colors">
                 <td className="px-6 py-4">
                   <div className="font-bold text-white">{review.full_name}</div>
