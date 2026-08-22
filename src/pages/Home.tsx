@@ -64,17 +64,20 @@ export function Home() {
       
       <main className="flex-1 relative z-10 overflow-hidden">
         {/* Render dynamic sections first */}
-        {sections.filter(s => s.is_enabled).map(s => (
-          <ScrollReveal key={s.id} animation="fade" duration={0.6}>
-            {renderSection(s.section_key)}
-          </ScrollReveal>
-        ))}
+        {sections.filter(s => s.is_enabled).map(s => {
+          if (s.section_key === 'hero') {
+            return <div key={s.id}>{renderSection(s.section_key)}</div>;
+          }
+          return (
+            <ScrollReveal key={s.id} animation="fade" duration={0.6}>
+              {renderSection(s.section_key)}
+            </ScrollReveal>
+          );
+        })}
 
         {/* Fallback/static sections */}
         {sections.length === 0 && (
-          <ScrollReveal animation="fade" duration={0.6}>
-            <HeroSection onOpenBooking={() => setIsBookingOpen(true)} />
-          </ScrollReveal>
+          <HeroSection onOpenBooking={() => setIsBookingOpen(true)} />
         )}
         <ScrollReveal animation="slideUp" duration={0.6}>
           <TechMarquee />
