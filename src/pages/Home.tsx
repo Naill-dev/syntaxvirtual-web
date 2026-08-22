@@ -86,11 +86,6 @@ export function Home() {
 
       <Footer />
       
-      <ArticleModal 
-        article={selectedArticle} 
-        onClose={() => setSelectedArticle(null)} 
-      />
-
       <BookingModal 
         isOpen={isBookingOpen} 
         onClose={() => setIsBookingOpen(false)} 

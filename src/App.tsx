@@ -5,6 +5,8 @@ import { Home } from './pages/Home';
 import { Dashboard } from './pages/Dashboard';
 import { Toaster } from 'react-hot-toast';
 
+import { ArticlePage } from './pages/ArticlePage';
+
 function App() {
   const location = useLocation();
 
@@ -30,6 +32,7 @@ function App() {
       }} />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/blog/:slug" element={<ArticlePage />} />
         <Route path="/dashboard/*" element={<Dashboard />} />
       </Routes>
     </>

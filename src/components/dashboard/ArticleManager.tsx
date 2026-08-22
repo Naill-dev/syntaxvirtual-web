@@ -39,11 +39,21 @@ export function ArticleManager() {
       const { data: userData } = await supabase.auth.getUser();
       const email = userData.user?.email || 'unknown';
 
+      // Auto-generate slug if it doesn't exist
+      let slug = (currentArticle as any).slug;
+      if (!slug && currentArticle.title) {
+        const baseSlug = currentArticle.title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-');
+        const randomStr = Math.random().toString(36).substring(2, 8);
+        slug = `${baseSlug}-${randomStr}`;
+      }
+      
+      const payload = { ...currentArticle, slug };
+
       if (currentArticle.id) {
         // Update
         const { error } = await supabase
           .from('articles')
-          .update(currentArticle)
+          .update(payload)
           .eq('id', currentArticle.id);
         if (error) throw error;
         await logAuditAction(email, 'updated_article', { article_id: currentArticle.id });
@@ -52,7 +62,7 @@ export function ArticleManager() {
         // Insert
         const { error } = await supabase
           .from('articles')
-          .insert([currentArticle]);
+          .insert([payload]);
         if (error) throw error;
         await logAuditAction(email, 'created_article', { title: currentArticle.title });
         toast.success('Article created');
