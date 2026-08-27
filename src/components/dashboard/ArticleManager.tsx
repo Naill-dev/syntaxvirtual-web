@@ -4,12 +4,14 @@ import { logAuditAction } from '../../lib/audit';
 import { Trash2, Edit3, Plus, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { MediaLibrary } from './MediaLibrary';
+import RichTextEditor from '../ui/RichTextEditor';
 
 export function ArticleManager() {
   const [articles, setArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   const [currentArticle, setCurrentArticle] = useState<any>({});
   
   const fetchArticles = async () => {
@@ -132,12 +134,51 @@ export function ArticleManager() {
             <textarea required rows={2} value={currentArticle.excerpt || ''} onChange={e => setCurrentArticle({...currentArticle, excerpt: e.target.value})} className="w-full mt-1 px-4 py-2 rounded-xl bg-surface-200 border border-slate-700 text-white"></textarea>
           </div>
           <div>
-            <label className="text-xs font-medium text-slate-400">Content (Markdown supported)</label>
-            <textarea required rows={10} value={currentArticle.content || ''} onChange={e => setCurrentArticle({...currentArticle, content: e.target.value})} className="w-full mt-1 px-4 py-2 rounded-xl bg-surface-200 border border-slate-700 text-white font-mono text-sm"></textarea>
+            <label className="text-xs font-medium text-slate-400">Content</label>
+            <RichTextEditor
+              value={currentArticle.content || ''}
+              onChange={(value) => setCurrentArticle({...currentArticle, content: value})}
+              placeholder="Write your article content here..."
+            />
           </div>
           
-          <button type="submit" className="px-6 py-3 rounded-xl bg-accent-purple hover:bg-accent-violet text-white font-bold text-sm">Save Article</button>
+          <div className="flex gap-4">
+            <button type="submit" className="px-6 py-3 rounded-xl bg-accent-purple hover:bg-accent-violet text-white font-bold text-sm">Save Article</button>
+            <button
+              type="button"
+              onClick={() => setShowPreview(true)}
+              className="px-6 py-3 bg-surface-100 text-white rounded-xl hover:bg-surface-200 font-bold text-sm"
+            >
+              👁️ Preview
+            </button>
+          </div>
         </form>
+
+        {showPreview && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4 backdrop-blur-sm">
+            <div className="bg-surface-300 rounded-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-slate-700">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold text-white">Preview: {currentArticle.title}</h3>
+                <button
+                  onClick={() => setShowPreview(false)}
+                  className="text-slate-400 hover:text-white transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+              <div className="prose prose-invert prose-indigo max-w-none">
+                {currentArticle.cover_image_url && (
+                  <img 
+                    src={currentArticle.cover_image_url} 
+                    alt={currentArticle.title}
+                    className="w-full h-auto max-h-[400px] object-cover rounded-xl mb-8"
+                  />
+                )}
+                <div dangerouslySetInnerHTML={{ __html: currentArticle.content || '' }} />
+              </div>
+            </div>
+          </div>
+        )}
         
         {isMediaModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">

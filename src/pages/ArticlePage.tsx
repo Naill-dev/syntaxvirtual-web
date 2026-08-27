@@ -133,40 +133,25 @@ export const ArticlePage: React.FC = () => {
           </div>
 
           {/* Content */}
-          <div className="prose prose-invert prose-slate max-w-none prose-headings:font-bold prose-headings:text-white prose-a:text-teal-300 prose-code:text-indigo-300 prose-code:bg-surface-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-pre:bg-[#0A0F2C] prose-pre:border prose-pre:border-slate-800">
-            {article.content.split('\\n\\n').map((paragraph, i) => {
-              if (paragraph.startsWith('### ')) {
-                return <h3 key={i} className="text-2xl mt-8 mb-4">{paragraph.replace('### ', '')}</h3>;
-              }
-              if (paragraph.startsWith('```')) {
-                const codeLines = paragraph.split('\\n');
-                const code = codeLines.slice(1, -1).join('\\n');
-                return (
-                  <pre key={i} className="p-4 rounded-xl overflow-x-auto text-sm my-6">
-                    <code>{code}</code>
-                  </pre>
-                );
-              }
-              if (paragraph.startsWith('- [x]')) {
-                return (
-                  <div key={i} className="flex items-center gap-2 my-2">
-                    <div className="w-4 h-4 rounded bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center">
-                      <div className="w-2 h-2 bg-emerald-500 rounded-sm" />
-                    </div>
-                    <span className="text-slate-300">{paragraph.replace('- [x] ', '')}</span>
-                  </div>
-                );
-              }
-              if (paragraph.startsWith('>')) {
-                return (
-                  <blockquote key={i} className="border-l-4 border-teal-500 pl-4 my-6 italic text-slate-300">
-                    {paragraph.replace('> ', '')}
-                  </blockquote>
-                );
-              }
-              return <p key={i} className="mb-4 text-slate-300 leading-relaxed">{paragraph}</p>;
-            })}
-          </div>
+          <div 
+            className="prose prose-invert max-w-none
+              prose-headings:text-white
+              prose-h1:text-4xl prose-h1:font-bold
+              prose-h2:text-3xl prose-h2:font-semibold
+              prose-h3:text-2xl prose-h3:font-medium
+              prose-p:text-gray-300 prose-p:leading-relaxed
+              prose-ul:text-gray-300
+              prose-ol:text-gray-300
+              prose-li:text-gray-300
+              prose-strong:text-white
+              prose-em:text-gray-300
+              prose-blockquote:border-indigo-500 prose-blockquote:bg-gray-800 prose-blockquote:p-4
+              prose-img:rounded-lg prose-img:w-full
+              prose-a:text-indigo-400 prose-a:hover:text-indigo-300
+              prose-code:bg-gray-800 prose-code:px-1 prose-code:rounded
+              prose-pre:bg-gray-800 prose-pre:p-4 prose-pre:rounded-lg"
+            dangerouslySetInnerHTML={{ __html: article.content }}
+          />
         </article>
 
         {/* Comments Section */}
