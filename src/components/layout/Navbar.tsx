@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, ArrowUpRight, Sparkles, PhoneCall } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
 import logoImage from '../../assets/logo.png';
+import { LabButton } from '../ui/LabButton';
 
 interface NavbarProps {
   onOpenBooking: () => void;
@@ -109,6 +110,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
             <span>Book Call</span>
           </button>
 
+          <LabButton />
+
           <a
             href="#contact"
             className="relative group overflow-hidden rounded-xl p-px font-medium text-xs focus:outline-none"
@@ -157,6 +160,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
                 <PhoneCall className="w-4 h-4 text-accent-lavender" />
                 Schedule Discovery Call
               </button>
+              
+              <LabButton isMobile className="justify-center" />
+
               <a
                 href="#contact"
                 onClick={() => setMobileMenuOpen(false)}

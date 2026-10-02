@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight, Sparkles, Code2, Zap, ShieldCheck, Star, Play, Terminal } from 'lucide-react';
 import { CodeTerminal } from '../visual/CodeTerminal';
+import { LabButton } from '../ui/LabButton';
 
 interface HeroSectionProps {
   onOpenBooking: () => void;
@@ -57,7 +58,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenBooking }) => {
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+            <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
               <a
                 href="#contact"
                 className="w-full sm:w-auto px-8 py-4 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-teal-500 via-cyan-600 to-indigo-600 shadow-glow-md hover:shadow-glow-lg hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 group"
@@ -73,6 +74,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenBooking }) => {
               >
                 <span>View Selected Work</span>
               </a>
+
+              <div className="w-full sm:w-auto flex justify-center">
+                <LabButton className="py-3.5 px-6 text-sm" text="Explore Syntax Lab" />
+              </div>
 
               <button
                 onClick={onOpenBooking}
