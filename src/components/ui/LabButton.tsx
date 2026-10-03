@@ -1,5 +1,6 @@
 import React from 'react';
 import { Beaker } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface LabButtonProps {
   text?: string;
@@ -23,25 +24,21 @@ export const LabButton: React.FC<LabButtonProps> = ({
 
   if (isMobile) {
     return (
-      <a
-        href="https://lab.syntaxvirtual.com"
-        target="_blank"
-        rel="noopener noreferrer"
+      <Link
+        to="/lab"
         onClick={handleClick}
         className={`flex items-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-accent-purple/20 to-electric-cyan/20 border border-accent-purple/30 text-white font-medium hover:bg-surface-200 transition-colors ${className}`}
         aria-label="Go to SyntaxVirtual Lab"
       >
         <span className="text-electric-cyan">{icon}</span>
         {text}
-      </a>
+      </Link>
     );
   }
 
   return (
-    <a
-      href="https://lab.syntaxvirtual.com"
-      target="_blank"
-      rel="noopener noreferrer"
+    <Link
+      to="/lab"
       onClick={handleClick}
       className={`group relative inline-flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm text-white overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(124,58,237,0.5)] active:scale-95 ${className}`}
       aria-label="Go to SyntaxVirtual Lab"
@@ -57,6 +54,6 @@ export const LabButton: React.FC<LabButtonProps> = ({
         <span className="animate-pulse">{icon}</span>
         {text}
       </span>
-    </a>
+    </Link>
   );
 };
