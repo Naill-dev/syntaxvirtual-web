@@ -20,7 +20,7 @@ export function CodeEditor() {
         language={language === 'html' ? 'html' : language}
         theme={theme === 'dark' ? 'vs-dark' : 'vs-light'}
         value={code}
-        onChange={(val) => setCode(val || '')}
+        onChange={(val: string | undefined) => setCode(val || '')}
         onMount={handleEditorDidMount}
         options={{
           minimap: { enabled: false },
