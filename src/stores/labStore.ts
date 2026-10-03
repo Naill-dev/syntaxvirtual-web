@@ -9,9 +9,11 @@ interface LabState {
   code: string;
   language: Language;
   layout: LayoutDirection;
+  theme: 'dark' | 'light';
   setCode: (code: string) => void;
   setLanguage: (lang: Language) => void;
   setLayout: (layout: LayoutDirection) => void;
+  setTheme: (theme: 'dark' | 'light') => void;
   runTimestamp: number;
   run: () => void;
 }
@@ -29,10 +31,12 @@ export const useLabStore = create<LabState>()(
       code: defaultCode.javascript,
       language: 'javascript',
       layout: 'horizontal',
+      theme: 'dark',
       runTimestamp: 0,
       setCode: (code) => set({ code }),
       setLanguage: (lang) => set({ language: lang, code: defaultCode[lang] }),
       setLayout: (layout) => set({ layout }),
+      setTheme: (theme) => set({ theme }),
       run: () => set({ runTimestamp: Date.now() }),
     }),
     {
