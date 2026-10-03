@@ -16,16 +16,18 @@ export function Toolbar() {
           <option value="javascript">JavaScript</option>
           <option value="python">Python</option>
           <option value="sql">SQL</option>
-          <option value="html">HTML/CSS/JS</option>
+          <option value="html">Web (HTML/CSS/JS)</option>
         </select>
         
-        <button 
-          onClick={run}
-          className="flex items-center gap-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 px-4 py-1.5 rounded-lg text-sm font-medium transition-colors"
-        >
-          <Play className="w-4 h-4" />
-          Run
-        </button>
+        {language !== 'html' && (
+          <button 
+            onClick={run}
+            className="flex items-center gap-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 px-4 py-1.5 rounded-lg text-sm font-medium transition-colors"
+          >
+            <Play className="w-4 h-4" />
+            Run
+          </button>
+        )}
       </div>
 
       <div className="flex items-center gap-2">

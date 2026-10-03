@@ -13,7 +13,7 @@ export function LabLayout() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50 flex flex-col font-sans">
       <Navbar onOpenBooking={() => {}} />
-      <div className="flex-1 flex overflow-hidden pt-20">
+      <div className="flex-1 flex overflow-hidden pt-[130px] sm:pt-[150px] md:pt-[170px]">
         {/* Sidebar */}
         <div className="hidden md:flex w-64 flex-col border-r border-slate-800/80 bg-slate-900/50 p-4 shadow-[4px_0_24px_-12px_rgba(124,58,237,0.1)]">
           <h2 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 px-2">Syntax Lab</h2>

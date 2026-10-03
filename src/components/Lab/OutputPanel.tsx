@@ -4,10 +4,23 @@ import { useLabStore } from '../../stores/labStore';
 import { Terminal, RefreshCw, Globe } from 'lucide-react';
 
 export function OutputPanel() {
-  const { code, language, runTimestamp } = useLabStore();
+  const { code, htmlCode, cssCode, jsCode, language, runTimestamp } = useLabStore();
   const [output, setOutput] = useState<string>('');
   const [isRunning, setIsRunning] = useState(false);
   const [activeTab, setActiveTab] = useState<'console' | 'preview'>(language === 'html' ? 'preview' : 'console');
+
+  // Combined source for live preview
+  const combinedSrc = `
+    <html>
+      <head>
+        <style>${cssCode}</style>
+      </head>
+      <body>
+        ${htmlCode}
+        <script>${jsCode}</script>
+      </body>
+    </html>
+  `;
 
   useEffect(() => {
     if (language === 'html') setActiveTab('preview');
@@ -15,7 +28,7 @@ export function OutputPanel() {
   }, [language]);
 
   useEffect(() => {
-    if (runTimestamp === 0) return;
+    if (runTimestamp === 0 || language === 'html') return; // HTML is live, no run needed
     
     const executeCode = async () => {
       setIsRunning(true);
@@ -52,7 +65,7 @@ export function OutputPanel() {
     };
 
     executeCode();
-  }, [runTimestamp]);
+  }, [runTimestamp, code, language]);
 
   return (
     <div className="flex flex-col w-full h-full bg-[#0f172a]">
@@ -74,12 +87,12 @@ export function OutputPanel() {
             }`}
           >
             <Globe className="w-3.5 h-3.5" />
-            Preview
+            Live Preview
           </button>
         )}
       </div>
       
-      <div className="flex-1 overflow-auto p-4 relative font-mono text-sm">
+      <div className="flex-1 overflow-auto p-4 relative font-mono text-sm bg-slate-950">
         {isRunning && (
           <div className="absolute top-4 right-4 text-accent-purple animate-spin">
             <RefreshCw className="w-4 h-4" />
@@ -92,8 +105,8 @@ export function OutputPanel() {
           <iframe
             title="preview"
             sandbox="allow-scripts"
-            srcDoc={code}
-            className="w-full h-full bg-white rounded"
+            srcDoc={combinedSrc}
+            className="w-full h-full bg-white rounded-lg shadow-inner"
           />
         )}
       </div>
